@@ -1,0 +1,29 @@
+### Calico EN/ZH Global 75153
+###GameGuru 46260
+GET http://localhost:3000/api/products/productsBySlug
+Content-Type: application/json
+
+{
+    "gameName": ""
+}
+
+###
+GET http://localhost:3000/api/products/productsList
+
+###
+GET http://localhost:3000/api/products/productIds
+
+### O número do meio que é o jogo impossível
+    #"myProductIds": [31004, 1622240, 142477]
+POST http://localhost:3000/api/products/compareAll
+Content-Type: application/json
+
+{
+    "myProductIds": [31004, 1622240, 142477]
+}
+
+### Dá p descobrir o nome do jogo enviando o id para essa rota
+GET http://localhost:3000/api/products/compareById/132666    
+
+### Dá p descobrir o nome do jogo enviando o id para essa rota
+GET http://localhost:3000/api/products/priceResearcher/professor-watts-memory-match-expressions
