@@ -1,7 +1,9 @@
 const axios = require('axios');
 const slugify = require('slugify');
+const { calcPrecoSemTaxa } = require('../functions/calcPrecoSemTaxa.js');
 const url = process.env.URL;
 const token = process.env.TOKEN;
+const nomeVendedor = process.env.nomeVendedor;
 const taxaGamivoPorcentagemMaiorIgual4 = Number(process.env.TAXA_GAMIVO_PORCENTAGEM_MAIORIGUAL_4);
 const taxaGamivoFixoMaiorIgual4 = Number(process.env.TAXA_GAMIVO_FIXO_MAIORIGUAL_4);
 const taxaGamivoPorcentagemMenorQue4 = Number(process.env.TAXA_GAMIVO_PORCENTAGEM_MENOR_QUE4);
@@ -161,9 +163,9 @@ const compareById = async (req, res) => {
             let menorPrecoTotal = Number.MAX_SAFE_INTEGER; // Define um preço alto para depois ser substituído pelos menores preços de verdade
             let menorPreco; // Só para enviar na resposta
             let segundoMenorPreco; // Como vem ordenado, o segundo é sempre o segundo menor preço
-            let offerId;
+            let offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale;
 
-            if (response.data[0].seller_name !== 'Bestbuy86') { // Checar se nós já somos o menor preço
+            if (response.data[0].seller_name !== nomeVendedor) { // Checar se nós já somos o menor preço
 
                   //Separar caso que só tem ele vendendo
                   if (response.data[1]) {
@@ -171,7 +173,7 @@ const compareById = async (req, res) => {
                   }
 
                   for (const produto of response.data) {
-                        if (produto.seller_name !== 'Bestbuy86') {
+                        if (produto.seller_name !== nomeVendedor) {
                               let ignoreSeller = false; // True = candango, false = vendedor experiente
                               // Obtém o preço de varejo do produto
 
@@ -193,8 +195,12 @@ const compareById = async (req, res) => {
                               }
                         } else {
                               offerId = produto.id;
+                              wholesale_mode = produto.wholesale_mode;
+                              wholesale_price_tier_one = produto.wholesale_price_tier_one;
+                              wholesale_price_tier_two = produto.wholesale_price_tier_two;
                         }
                   }
+
 
                   if (qtdCandango >= 3) {
                         console.log(`MAIS DE 3 CANDANGOS NO ID: ${id} `); // Considera o preço menor independente
@@ -203,21 +209,23 @@ const compareById = async (req, res) => {
                         menorPreco = menorPrecoSemCandango; // Considera SOMENTE os preços dos vendedores experientes
                   }
 
+                  // DEALS
+                  menorPreco = menorPrecoTotal; // Não iremos considerar candangos pois também somos um
+
                   if (response.data.length == 1 || menorPrecoTotal == Number.MAX_SAFE_INTEGER) {
                         console.log(`Você é o único vendedor do productId: ${id}`)
                         res.json({ id, menorPreco: -2 }); // Sem concorrentes
                   } else {
 
-                        if (menorPrecoTotal !== menorPrecoSemCandango) {
-                              console.log(`TEM CANDANGO NESSE JOGO.`)
-                              console.log(`menorPrecoTotal: ${menorPrecoTotal}, menorPrecoSemCandango: ${menorPrecoSemCandango}`);
-                              if (menorPrecoSemCandango == Number.MAX_SAFE_INTEGER) { // Caso os concorrentes sejam < 3 candangos e não tenha nenhum normal
-
-                                    console.log(response.data);
-                                    res.json({ id, menorPreco: -4 });
-                                    return;
-                              }
-                        }
+                        // DEALS
+                        // if (menorPrecoTotal !== menorPrecoSemCandango) {
+                        //       console.log(`TEM CANDANGO NESSE JOGO.`)
+                        //       console.log(`menorPrecoTotal: ${menorPrecoTotal}, menorPrecoSemCandango: ${menorPrecoSemCandango}`);
+                        //       if (menorPrecoSemCandango == Number.MAX_SAFE_INTEGER) { // Caso os concorrentes sejam < 3 candangos e não tenha nenhum normal
+                        //             res.json({ id, menorPreco: -4 });
+                        //             return;
+                        //       }
+                        // }
 
                         if (segundoMenorPreco > 1.0) { // Lógica para os samfiteiros
                               const diferenca = segundoMenorPreco - menorPreco;
@@ -225,14 +233,14 @@ const compareById = async (req, res) => {
 
                               if (diferenca >= dezPorCentoSegundoMenorPreco) {
                                     console.log('SAMFITEIRO!');
-                                    if (response.data[1].seller_name == 'Bestbuy86') { // Tem samfiteiro, mas ele é o segundo, não altera o preço
+                                    if (response.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, mas ele é o segundo, não altera o preço
                                           console.log('Já somos o segundo melhor preço!');
                                           res.json({ id, menorPreco: -4 });
                                           return;
                                     } else { // Tem samfiteiro, mas ele não é o segundo, altera o preço
                                           console.log(`Menor preço antes: ${menorPreco}`);
                                           menorPreco = response.data[1].retail_price;
-                                          console.log(`Menor preço depois ----------------------------------------: ${menorPreco}`);
+                                          console.log(`Menor preço depois do samfiteiro: ${menorPreco}`);
                                     }
                               }
                         }
@@ -245,43 +253,42 @@ const compareById = async (req, res) => {
 
                         // Calcula o novo preço sem a taxa, a gamivo irá adicionar as taxas dps, e o menorPreco será atingido
                         menorPreco = menorPreco - 0.02;
-                        if (menorPreco < 4) {
-                              menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMenorQue4) / (1 + taxaGamivoPorcentagemMenorQue4);
-                        }
-                        else {
-                              menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMaiorIgual4) / (1 + taxaGamivoPorcentagemMaiorIgual4)
-                        }
-                        console.log(`Para o menorPreco ${menorPreco.toFixed(3)} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa.toFixed(3)}`);
+                        menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
 
-                        if (menorPrecoSemTaxa < 0) {
-                              menorPrecoSemTaxa = 0.01;
-                        }
+                        console.log(`Para o menorPreco ${menorPreco.toFixed(2)} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa.toFixed(2)}`);
 
-                        res.json({ id, menorPreco: menorPrecoSemTaxa.toFixed(3), offerId });
+
+                        res.json({ id, menorPreco: menorPrecoSemTaxa.toFixed(2), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale: menorPreco.toFixed(2) });
                   }
-            } else {
+            } else { // Nós somos o menor preço
+                  offerId = response.data[0].id;
+                  wholesale_mode = response.data[0].wholesale_mode;
+                  wholesale_price_tier_one = response.data[0].wholesale_price_tier_one;
+                  wholesale_price_tier_two = response.data[0].wholesale_price_tier_two;
+
                   if (response.data[1]) {
                         segundoMenorPreco = response.data[1].retail_price;
                         const nossoPreco = response.data[0].retail_price;
                         const diferenca = segundoMenorPreco - nossoPreco;
 
+
                         if (diferenca >= 0.10) {
                               menorPreco = segundoMenorPreco - 0.02;
+                              menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
 
-                              if (menorPreco < 4) {
-                                    menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMenorQue4) / (1 + taxaGamivoPorcentagemMenorQue4);
-                              }
-                              else {
-                                    menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMaiorIgual4) / (1 + taxaGamivoPorcentagemMaiorIgual4)
-                              }
+                              // if (menorPreco < 4) {
+                              //       menorPrecoSemTaxa =  (menorPreco - taxaGamivoFixoMenorQue4) / (1 + taxaGamivoPorcentagemMenorQue4);
+                              // }
+                              // else {
+                              //       menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMaiorIgual4) / (1 + taxaGamivoPorcentagemMaiorIgual4)
+                              // }
 
-                              if (menorPrecoSemTaxa < 0) {
-                                    menorPrecoSemTaxa = 0.01;
-                              }
+                              // if (menorPrecoSemTaxa < 0) {
+                              //       menorPrecoSemTaxa = 0.01;
+                              // }
 
-                              offerId = response.data[0].id;
                               console.log("ESTAMOS COM O PREÇO ABAIXO, IREMOS AUMENTAR!");
-                              res.json({ id, menorPreco: menorPrecoSemTaxa.toFixed(3), offerId });
+                              res.json({ id, menorPreco: menorPrecoSemTaxa.toFixed(2), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale: menorPreco.toFixed(2) });
                         } else {
                               res.json({ id, menorPreco: -4 });
                         }
@@ -304,8 +311,6 @@ const compareById = async (req, res) => {
 
 const priceResearcher = async (req, res) => {
 
-      let menorPrecoComTaxa, menorPrecoSemTaxa, qtdCandango = 0;
-
       const { slug } = req.params; // O jogo está sendo recebido pelo id nos params
       try {
 
@@ -319,33 +324,29 @@ const priceResearcher = async (req, res) => {
             const { id } = response1.data;
             console.log(id);
 
-
-
-            // Com o productId, vai comparar pra ver o menor preço
-
+            // Com o productId, vai comparar pra ver o menor preço(mesma lógica do compareById)
             const response2 = await axios.get(`${url}/api/public/v1/products/${id}/offers`, {
                   headers: {
                         'Authorization': `Bearer ${token}`
                   },
             });
 
-
             // Descobrir qual é o menor preço que ele está sendo vendido
             let menorPrecoSemCandango = Number.MAX_SAFE_INTEGER;
             let menorPrecoTotal = Number.MAX_SAFE_INTEGER; // Define um preço alto para depois ser substituído pelos menores preços de verdade
             let menorPreco; // Só para enviar na resposta
             let segundoMenorPreco; // Como vem ordenado, o segundo é sempre o segundo menor preço
-            let offerId;
 
-            if (response2.data[0].seller_name !== 'Bestbuy86') { // Checar se nós já somos o menor preço
+            if (response2.data[0].seller_name !== nomeVendedor) { // Nós não somos o menor preço
 
                   //Separar caso que só tem ele vendendo
                   if (response2.data[1]) {
                         segundoMenorPreco = response2.data[1].retail_price;
                   }
 
+
                   for (const produto of response2.data) {
-                        if (produto.seller_name !== 'Bestbuy86') {
+                        if (produto.seller_name !== nomeVendedor) {
                               let ignoreSeller = false; // True = candango, false = vendedor experiente
                               // Obtém o preço de varejo do produto
 
@@ -376,6 +377,9 @@ const priceResearcher = async (req, res) => {
                   } else {
                         menorPreco = menorPrecoSemCandango; // Considera SOMENTE os preços dos vendedores experientes
                   }
+                  
+                  // DEALS
+                  menorPreco = menorPrecoTotal;
 
                   if (response2.data.length == 1 || menorPrecoTotal == Number.MAX_SAFE_INTEGER) {
                         console.log(`Você é o único vendedor do productId: ${id}`)
@@ -386,16 +390,18 @@ const priceResearcher = async (req, res) => {
                               console.log(`TEM CANDANGO NESSE JOGO.`)
                               console.log(`menorPrecoTotal: ${menorPrecoTotal}, menorPrecoSemCandango: ${menorPrecoSemCandango}`);
                               if (menorPrecoSemCandango == Number.MAX_SAFE_INTEGER) { // Caso os concorrentes sejam < 3 candangos e não tenha nenhum normal
-                                    if (response2.data[2]) {
-                                          res.json({ id, menorPreco: response2.data[2].retail_price });
-                                          return;
-                                    } else if (response2.data[1]) {
-                                          res.json({ id, menorPreco: response2.data[1].retail_price });
-                                          return;
-                                    } else {
-                                          res.json({ id, menorPreco: 'Erro inesperado' });
-                                          return;
-                                    }
+                                    res.json({ id, menorPreco: response2.data[0].retail_price });
+                                    return;
+                                    // if (response2.data[2]) {
+                                    //       res.json({ id, menorPreco: response2.data[2].retail_price });
+                                    //       return;
+                                    // } else if (response2.data[1]) {
+                                    //       res.json({ id, menorPreco: response2.data[1].retail_price });
+                                    //       return;
+                                    // } else {
+                                    //       res.json({ id, menorPreco: 'Erro inesperado' });
+                                    //       return;
+                                    // }
                               }
                         }
 
@@ -405,7 +411,7 @@ const priceResearcher = async (req, res) => {
 
                               if (diferenca >= dezPorCentoSegundoMenorPreco) {
                                     console.log('SAMFITEIRO!');
-                                    if (response2.data[1].seller_name == 'Bestbuy86') { // Tem samfiteiro, mas ele é o segundo, não altera o preço
+                                    if (response2.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, somos o segundo, não altera o preço
                                           console.log('Já somos o segundo melhor preço!');
                                           res.json({ id, menorPreco: response2.data[1].retail_price });
                                           return;
@@ -425,37 +431,41 @@ const priceResearcher = async (req, res) => {
 
                         res.json({ id, menorPreco: menorPreco.toFixed(2), offerId });
                   }
-            } else {
+
+            } else { // Considerando que podemos estar com o preço abaixo
                   if (response2.data[1]) {
+
                         segundoMenorPreco = response2.data[1].retail_price;
+
                         const nossoPreco = response2.data[0].retail_price;
+
                         const diferenca = segundoMenorPreco - nossoPreco;
 
                         if (diferenca >= 0.10) {
                               menorPreco = segundoMenorPreco - 0.01;
-
                               if (menorPreco < 0.12) {
                                     menorPreco = 0.12;
                               }
 
                               offerId = response2.data[0].id;
+
                               console.log("ESTAMOS COM O PREÇO ABAIXO, IREMOS AUMENTAR!");
                               res.json({ id, menorPreco: menorPreco.toFixed(2), offerId });
                         } else {
-                              res.json({ id, menorPreco: menorPreco.toFixed(2) });
+                              // console.log("ERRO AQUI!");
+                              res.json({ id, menorPreco: nossoPreco.toFixed(2) });
                         }
                   } else {
-                        res.json({ id, menorPreco: response2.data[0].retail_price });
+                        res.json({ menorPreco: response2.data[0].retail_price }); // alterar pro price-researcher?
                   }
             }
-
       } catch (error) {
-            // console.log('Esse é o error.response2: ' + error);
+            console.log('Esse é o error: ' + error);
             res.json({ menorPreco: 'F' });
       }
 }
 
-const productsBySlug = async (req, res) => {
+const productsBySlug = async (req, res) => {  // Não tá pronta
       const { gameName } = req.body;
 
       try {

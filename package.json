@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "teste": "nodemon teste-main.js",
-    "abrir": "nodemon comparador.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
