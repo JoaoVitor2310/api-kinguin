@@ -35,7 +35,7 @@ const productsList = async (req, res) => { // Penúltimo endpoint de products
 
 const productIds = async (req, res) => {
       // Lista os jogos que estão/tiveram a venda, podem ter jogos com o status 0 pelo visto.
-      let { offset = 100, limit = 100 } = req.query;
+      let { offset = 0, limit = 100 } = req.query;
 
       // offset: A partir de qual jogo vai mostrar
       // limit: Limite por página, não pode ser maior que 100
@@ -47,6 +47,12 @@ const productIds = async (req, res) => {
                               'Authorization': `Bearer ${token}`
                         },
                   });
+
+                  // console.log(response);
+                  // res.json('A');
+                  // return;
+
+
                   quantidade = response.data.length;
                   quatidadeTotal += response.data.length; // Quantidade total de ofertas
 

@@ -1,6 +1,6 @@
 ### Calico EN/ZH Global 75153
 ###GameGuru 46260
-GET http://localhost:3000/api/products/productsBySlug
+GET http://localhost:3001/api/products/productsBySlug
 Content-Type: application/json
 
 {
@@ -8,14 +8,14 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/api/products/productsList
+GET http://localhost:3001/api/products/productsList
 
 ###
-GET http://localhost:3000/api/products/productIds
+GET http://localhost:3001/api/products/productIds
 
 ### O número do meio que é o jogo impossível
     #"myProductIds": [31004, 1622240, 142477]
-POST http://localhost:3000/api/products/compareAll
+POST http://localhost:3001/api/products/compareAll
 Content-Type: application/json
 
 {
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ### Dá p descobrir o nome do jogo enviando o id para essa rota
-GET http://localhost:3000/api/products/compareById/144483
+GET http://localhost:3001/api/products/compareById/144483
 
 ### Dá p descobrir o nome do jogo enviando o id para essa rota
-GET http://localhost:3000/api/products/priceResearcher/sex-with-the-devil
+GET http://localhost:3001/api/products/priceResearcher/sex-with-the-devil

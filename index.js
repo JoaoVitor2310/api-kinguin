@@ -24,7 +24,7 @@ cron.schedule('0 */4 * * *', async () => { // Iremos colocar a api para atualiza
       timezone: 'America/Sao_Paulo'
   });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use('/', router);
 
