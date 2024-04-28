@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { calcPrecoSemTaxa } = require('../functions/calcPrecoSemTaxa.js');
+const { calcWholesaleSemTaxa } = require('../functions/calcWholesaleSemTaxa.js');
 const url = process.env.URL;
 const token = process.env.TOKEN;
 
@@ -124,13 +125,14 @@ const editOffer = async (req, res) => {
                         };
                         break;
                   case 1:
-                        console.log("AUAUAU O valor wholesale_mode é 1.");
-
                         // wholesale_price_tier_one = wholesale_price_tier_one / taxaWholesale;
                         // wholesale_price_tier_two = wholesale_price_tier_one / taxaWholesale;
 
-                        wholesale_price_tier_one = menorPrecoParaWholesale / taxaWholesale;
-                        wholesale_price_tier_two = menorPrecoParaWholesale / taxaWholesale;
+                        wholesale_price_tier_one = calcWholesaleSemTaxa(menorPrecoParaWholesale);
+                        wholesale_price_tier_two = calcWholesaleSemTaxa(menorPrecoParaWholesale);
+
+                        console.log("wholesale_price_tier_one: " + wholesale_price_tier_one);
+                        console.log("menorPreco: " + menorPreco);
 
                         body = { // Tá dando que o seller_price tem que ser maior que o wholesale
                               "wholesale_mode": 1,
@@ -141,11 +143,8 @@ const editOffer = async (req, res) => {
                         console.log("O valor wholesale_mode é 1.");
                         break;
                   case 2:
-                        console.log("AUAUAU O valor wholesale_mode é 2.");
-
-                        wholesale_price_tier_one = menorPrecoParaWholesale / taxaWholesale;
-                        wholesale_price_tier_two = menorPrecoParaWholesale / taxaWholesale;
-
+                        wholesale_price_tier_one = calcWholesaleSemTaxa(menorPrecoParaWholesale);
+                        wholesale_price_tier_two = calcWholesaleSemTaxa(menorPrecoParaWholesale);
 
                         console.log("wholesale_price_tier_one: " + wholesale_price_tier_one);
                         console.log("menorPreco: " + menorPreco);
@@ -191,6 +190,20 @@ const editOffer = async (req, res) => {
             console.log('Já somos o melhor preço.');
             res.json(-5);
       }
+}
+
+const calculatePrices = async (req, res) => {
+      const { retail, wholesale } = req.body;
+
+      const retailSemTaxa = calcPrecoSemTaxa(retail).toFixed(2);
+      const wholesaleSemTaxa = calcWholesaleSemTaxa(wholesale).toFixed(2);
+      const data = {
+            retailSemTaxa,
+            wholesaleSemTaxa
+      }
+      
+      res.json(data);
+      return;
 }
 
 const returnOfferId = async (req, res) => {
@@ -262,5 +275,6 @@ module.exports = {
       searchOfferById,
       editOffer,
       offerKeys,
-      returnOfferId
+      returnOfferId,
+      calculatePrices
 }

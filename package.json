@@ -2,11 +2,11 @@
   "name": "api-gamivo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "gamivo-cd.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon gamivo-cd.js",
+    "start": "node gamivo-cd.js"
   },
   "keywords": [],
   "author": "",
