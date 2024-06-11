@@ -383,7 +383,7 @@ const priceResearcher = async (req, res) => {
                   } else {
                         menorPreco = menorPrecoSemCandango; // Considera SOMENTE os preços dos vendedores experientes
                   }
-                  
+
                   // DEALS
                   menorPreco = menorPrecoTotal;
 
@@ -411,21 +411,17 @@ const priceResearcher = async (req, res) => {
                               }
                         }
 
-                        if (segundoMenorPreco > 1.0) { // Lógica para os samfiteiros
-                              const diferenca = segundoMenorPreco - menorPreco;
-                              const dezPorCentoSegundoMenorPreco = 0.1 * segundoMenorPreco;
+                        const diferenca = segundoMenorPreco - menorPreco;
+                        const dezPorCentoSegundoMenorPreco = 0.3 * segundoMenorPreco;
 
-                              if (diferenca >= dezPorCentoSegundoMenorPreco) {
-                                    console.log('SAMFITEIRO!');
-                                    if (response2.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, somos o segundo, não altera o preço
-                                          console.log('Já somos o segundo melhor preço!');
-                                          res.json({ id, menorPreco: response2.data[1].retail_price });
-                                          return;
-                                    } else { // Tem samfiteiro, mas ele não é o segundo, altera o preço
-                                          console.log(`Menor preço antes: ${menorPreco}`);
-                                          menorPreco = response2.data[1].retail_price;
-                                          console.log(`Menor preço depois ----------------------------------------: ${menorPreco}`);
-                                    }
+                        if (diferenca >= dezPorCentoSegundoMenorPreco) {
+                              console.log('SAMFITEIRO!');
+                              if (response2.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, somos o segundo, não altera o preço
+                                    console.log('Já somos o segundo melhor preço!');
+                                    res.json({ id, menorPreco: response2.data[1].retail_price });
+                                    return;
+                              } else { // Tem samfiteiro, mas não somos o segundo, altera o preço
+                                    menorPreco = response2.data[1].retail_price;
                               }
                         }
 
