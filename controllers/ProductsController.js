@@ -340,7 +340,7 @@ const priceResearcher = async (req, res) => {
             // Descobrir qual é o menor preço que ele está sendo vendido
             let menorPrecoSemCandango = Number.MAX_SAFE_INTEGER;
             let menorPrecoTotal = Number.MAX_SAFE_INTEGER; // Define um preço alto para depois ser substituído pelos menores preços de verdade
-            let menorPreco; // Só para enviar na resposta
+            let menorPreco, qtdCandango, offerId; // Só para enviar na resposta
             let segundoMenorPreco; // Como vem ordenado, o segundo é sempre o segundo menor preço
 
             if (response2.data[0].seller_name !== nomeVendedor) { // Nós não somos o menor preço
@@ -412,7 +412,7 @@ const priceResearcher = async (req, res) => {
                         }
 
                         const diferenca = segundoMenorPreco - menorPreco;
-                        const dezPorCentoSegundoMenorPreco = 0.3 * segundoMenorPreco;
+                        const dezPorCentoSegundoMenorPreco = 0.1 * segundoMenorPreco;
 
                         if (diferenca >= dezPorCentoSegundoMenorPreco) {
                               console.log('SAMFITEIRO!');

@@ -26,4 +26,4 @@ Content-Type: application/json
 GET http://localhost:3001/api/products/compareById/1428
 
 ### Dá p descobrir o nome do jogo enviando o id para essa rota
-GET http://localhost:3001/api/products/priceResearcher/sex-with-the-devil
+GET http://localhost:3001/api/products/priceResearcher/elden-ring-eu
