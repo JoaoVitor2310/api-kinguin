@@ -233,23 +233,28 @@ const compareById = async (req, res) => {
                         //       }
                         // }
 
-                        if (segundoMenorPreco > 1.0) { // Lógica para os samfiteiros
-                              const diferenca = segundoMenorPreco - menorPreco;
-                              const dezPorCentoSegundoMenorPreco = 0.1 * segundoMenorPreco;
+                        const diferenca = segundoMenorPreco - menorPreco;
+                        let porcentagemDiferenca;
 
-                              if (diferenca >= dezPorCentoSegundoMenorPreco) {
-                                    console.log('SAMFITEIRO!');
-                                    if (response.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, mas ele é o segundo, não altera o preço
-                                          console.log('Já somos o segundo melhor preço!');
-                                          res.json({ id, menorPreco: -4 });
-                                          return;
-                                    } else { // Tem samfiteiro, mas ele não é o segundo, altera o preço
-                                          console.log(`Menor preço antes: ${menorPreco}`);
-                                          menorPreco = response.data[1].retail_price;
-                                          console.log(`Menor preço depois do samfiteiro: ${menorPreco}`);
-                                    }
+                        // Lógica para os samfiteiros
+                        if (segundoMenorPreco > 1.0) porcentagemDiferenca = 0.1 * segundoMenorPreco;
+                        else porcentagemDiferenca = 0.05 * segundoMenorPreco;
+
+                        if (diferenca >= porcentagemDiferenca) {
+                              console.log('SAMFITEIRO!');
+                              if (response.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, mas ele é o segundo, não altera o preço
+                                    console.log('Já somos o segundo melhor preço!');
+                                    res.json({ id, menorPreco: -4 });
+                                    return;
+                              } else { // Tem samfiteiro, mas ele não é o segundo, altera o preço
+                                    console.log(`Menor preço antes: ${menorPreco}`);
+                                    menorPreco = response.data[1].retail_price;
+                                    console.log(`Menor preço depois do samfiteiro: ${menorPreco}`);
                               }
                         }
+
+
+
 
                         // if (menorPreco < 4) { // Calcula a taxa do novo preço
                         //       menorPrecoComTaxa = menorPreco + (menorPreco * taxaGamivoPorcentagemMenorQue4) + taxaGamivoFixoMenorQue4;
@@ -412,9 +417,9 @@ const priceResearcher = async (req, res) => {
                         }
 
                         const diferenca = segundoMenorPreco - menorPreco;
-                        const dezPorCentoSegundoMenorPreco = 0.1 * segundoMenorPreco;
+                        const porcentagemDiferenca = 0.1 * segundoMenorPreco;
 
-                        if (diferenca >= dezPorCentoSegundoMenorPreco) {
+                        if (diferenca >= porcentagemDiferenca) {
                               console.log('SAMFITEIRO!');
                               if (response2.data[1].seller_name == nomeVendedor) { // Tem samfiteiro, somos o segundo, não altera o preço
                                     console.log('Já somos o segundo melhor preço!');
