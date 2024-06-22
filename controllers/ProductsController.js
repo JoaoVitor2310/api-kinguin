@@ -9,6 +9,8 @@ const taxaGamivoFixoMaiorIgual4 = Number(process.env.TAXA_GAMIVO_FIXO_MAIORIGUAL
 const taxaGamivoPorcentagemMenorQue4 = Number(process.env.TAXA_GAMIVO_PORCENTAGEM_MENOR_QUE4);
 const taxaGamivoFixoMenorQue4 = Number(process.env.TAXA_GAMIVO_FIXO_MENOR_QUE4);
 
+const sellersToIgnore = ['Kinguin', 'Buy-n-Play', 'Playtime'];
+
 const productsList = async (req, res) => { // Penúltimo endpoint de products
       // Lista os jogos que o usuário tem disponível? Agora estou na dúvida se é isso msm. Útil para ver os detalhes dos jogos
       // Ainda não sei como pode ser útil para a gente
@@ -171,7 +173,9 @@ const compareById = async (req, res) => {
             let segundoMenorPreco; // Como vem ordenado, o segundo é sempre o segundo menor preço
             let offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale;
 
-            if (response.data[0].seller_name !== nomeVendedor) { // Checar se nós já somos o menor preço
+            response.data = response.data.filter(offer => !sellersToIgnore.includes(offer.seller_name));
+
+            if (response.data[0].seller_name !== nomeVendedor) { //Não somos o menor preço
 
                   //Separar caso que só tem ele vendendo
                   if (response.data[1]) {
