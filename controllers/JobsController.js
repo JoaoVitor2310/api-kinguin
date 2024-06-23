@@ -59,9 +59,9 @@ const attPrices = async (req, res) => {
                             'Authorization': `Bearer ${token}`
                         },
                     }); // Recebe um objeto com o id do jogo, e o menor preço que pode ser: o preço mesmo, -1 para jogos impossíveis e -2 para jogos sem concorrentes
-                    console.log(response3.data);
+                    console.log(response2.data.id); 
                     if(response3.data > 0){
-                        jogosAtualizados.push(response3.data);
+                        jogosAtualizados.push(response2.data.id);
                     }
                 } catch (error) {
                     console.error(error);

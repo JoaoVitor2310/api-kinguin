@@ -45,6 +45,6 @@ POST http://localhost:3001/api/offers/calculatePrices
 Content-Type: application/json
 
 {
-    "retail": 0.98,
+    "retail": 2.99,
     "wholesale": 0.98
 }

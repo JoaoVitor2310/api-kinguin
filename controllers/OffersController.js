@@ -107,7 +107,7 @@ const editOffer = async (req, res) => {
       let body;
 
 
-      if (offerId && productId !== "1767" && productId !== "143203" && productId !== "123156" && productId !== "136005" && productId !== "124442") { // Jogo aleatório da gamivo, shift happens, deathloop deluxe, star wars battlefront 2 deluxe, dont-starve-together 
+      if (offerId && productId !== "1767" && productId !== "143203" && productId !== "123156" && productId !== "136005" && productId !== "124442" && productId !== "158283") { // Jogo aleatório da gamivo, shift happens, deathloop deluxe, star wars battlefront 2 deluxe, dont-starve-together, Book of Hours
             // Debug
             // console.log(productId); // Inútil para editar
             // console.log(menorPreco);
