@@ -22,10 +22,9 @@ shift happens não deve mudar o preço FEITO
 dont starve together não deve mudar o preço FEITO
 deathloop não deve mudar o preço FEITO
 star wars não deve mudar o preço FEITO
-VOLTAR A IGNORAR A KINGUIN FEITO
+IGNORAR: Kinguin Buy-n-Play Playtime FEITO
 
 rodar 3h 6h 8h 12h 15h 18h 21h 00h FEITO
 
 
 se a diferença pro playtime for menor que 10% e a diferença pro terceiro for maior que 10%, bater o preço do terceiro
-

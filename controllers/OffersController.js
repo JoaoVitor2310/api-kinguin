@@ -107,7 +107,21 @@ const editOffer = async (req, res) => {
       let body;
 
 
-      if (offerId && productId !== "1767" && productId !== "143203" && productId !== "123156" && productId !== "136005" && productId !== "124442" && productId !== "158283") { // Jogo aleatório da gamivo, shift happens, deathloop deluxe, star wars battlefront 2 deluxe, dont-starve-together, Book of Hours
+      if (offerId && productId !== "1767" && productId !== "67120" && productId !== "123156" && productId !== "136005" && productId !== "28264" && productId !== "49506" && productId !== "267" && productId !== "70325" && productId !== "59038" && productId !== "10711" && productId !== "173021" && productId !== "35879" && productId !== "283") {
+            // 1767: Jogo aleatório da gamivo
+            // 67120: Streamer Life Simulator
+            // 123156: Deathloop Deluxe
+            // 136005: Star Wars Battlefront 2 Deluxe
+            // 28264: _
+            // 49506: The Coma 2: Vicious Sisters
+            // 267: Commandos: Behind Enemy Lines
+            // 70325: Neighbours Back From Hell
+            // 59038: ATOM RPG Trudograd
+            // 10711: Moonlighter
+            // 173021: Miasma Chronicles
+            // 35879: Commandos 2: Men of Courage
+            // 283: Company of Heroes: Tales of Valor
+
             // Debug
             // console.log(productId); // Inútil para editar
             // console.log(menorPreco);
@@ -201,7 +215,7 @@ const calculatePrices = async (req, res) => {
             retailSemTaxa,
             wholesaleSemTaxa
       }
-      
+
       res.json(data);
       return;
 }
