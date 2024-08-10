@@ -94,6 +94,9 @@ const searchOfferById = async (req, res) => {
       }
 }
 
+// TAXA_GAMIVO_PORCENTAGEM_MAIORIGUAL_4 = 0.05
+// TAXA_GAMIVO_FIXO_MAIORIGUAL_4 = 0.32
+
 const editOffer = async (req, res) => {
       // Passo a passo
       // Recebe o offerId, menorPreco, productId pelo body
@@ -107,21 +110,15 @@ const editOffer = async (req, res) => {
       let body;
 
 
-      if (offerId && productId !== "1767" && productId !== "67120" && productId !== "123156" && productId !== "136005" && productId !== "28264" && productId !== "49506" && productId !== "267" && productId !== "70325" && productId !== "59038" && productId !== "10711" && productId !== "173021" && productId !== "35879" && productId !== "283") {
-            // 1767: Jogo aleatório da gamivo
-            // 67120: Streamer Life Simulator
-            // 123156: Deathloop Deluxe
-            // 136005: Star Wars Battlefront 2 Deluxe
-            // 28264: _
-            // 49506: The Coma 2: Vicious Sisters
-            // 267: Commandos: Behind Enemy Lines
-            // 70325: Neighbours Back From Hell
-            // 59038: ATOM RPG Trudograd
-            // 10711: Moonlighter
-            // 173021: Miasma Chronicles
-            // 35879: Commandos 2: Men of Courage
-            // 283: Company of Heroes: Tales of Valor
-
+      if (offerId &&
+            productId !== "1767" && // 1767: Jogo aleatório da gamivo
+            productId !== "267" && // 267: Commandos: Behind Enemy Lines
+            productId !== "35879" && // 35879: Commandos 2: Men of Courage
+            productId !== "129971" && // Internet Cafe Simulator 2
+            productId !== "47603" && // LEGO Star Wars: The Skywalker Saga
+            productId !== "32064" && // Assassin's Creed Global Ubisoft Connect
+            productId !== "283") { // 283: Company of Heroes: Tales of Valor
+            
             // Debug
             // console.log(productId); // Inútil para editar
             // console.log(menorPreco);

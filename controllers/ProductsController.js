@@ -149,7 +149,7 @@ const compareById = async (req, res) => {
       
       let menorPrecoComTaxa, menorPrecoSemTaxa, qtdCandango = 0;
       
-      const sellersToIgnore = ['Kinguin', 'Buy-n-Play', 'Playtime']; // Ignora esses para abaixar o preço
+      const sellersToIgnore = ['Kinguin', 'Buy-n-Play', 'Playtime', 'Estateium']; // Ignora esses para abaixar o preço
       
       // Definir o productId do jogo em questão
       const { id } = req.params; // O jogo está sendo recebido pelo id nos params
@@ -180,7 +180,7 @@ const compareById = async (req, res) => {
                   }
                   
                   response.data = response.data.filter(offer => !sellersToIgnore.includes(offer.seller_name)); // Remove os concorrentes que são para ignorar
-                  //Separar caso que só tem ele vendendo
+                  //Separar caso que só tem a gente vendendo
                   if (response.data[1]) {
                         segundoMenorPreco = response.data[1].retail_price;
                   }
@@ -280,7 +280,7 @@ const compareById = async (req, res) => {
                         const diferenca = segundoMenorPreco - nossoPreco;
 
 
-                        if (diferenca >= 0.10) {
+                        if (diferenca >= 0.04) {
                               menorPreco = segundoMenorPreco - 0.02;
                               menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
 
