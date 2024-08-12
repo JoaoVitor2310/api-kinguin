@@ -262,7 +262,13 @@ const compareById = async (req, res) => {
 
                         // Calcula o novo preço sem a taxa, a gamivo irá adicionar as taxas dps, e o menorPreco será atingido
                         menorPreco = menorPreco - 0.02;
-                        menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
+                        // menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
+                        
+                        if(menorPreco > 3.99 && menorPreco < 4.61) { // POR CAUSA DO BUG DA GAMIVO
+                              menorPrecoSemTaxa = 3.69
+                        } else{
+                              menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
+                        }
 
                         console.log(`Para o menorPreco ${menorPreco.toFixed(2)} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa.toFixed(2)}`);
 
@@ -282,7 +288,13 @@ const compareById = async (req, res) => {
 
                         if (diferenca >= 0.04) {
                               menorPreco = segundoMenorPreco - 0.02;
-                              menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
+                              // menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
+
+                              if(menorPreco > 3.99 && menorPreco < 4.61) { // POR CAUSA DO BUG DA GAMIVO
+                                    menorPrecoSemTaxa = 3.69
+                              } else{
+                                    menorPrecoSemTaxa = calcPrecoSemTaxa(menorPreco);
+                              }
 
                               menorPreco = menorPreco.toFixed(2)
                               menorPrecoSemTaxa = menorPrecoSemTaxa.toFixed(2);
@@ -486,5 +498,6 @@ module.exports = {
       compareAll,
       compareById,
       productsBySlug,
-      priceResearcher
+      priceResearcher,
+      newBug,
 }

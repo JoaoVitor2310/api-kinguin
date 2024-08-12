@@ -33,9 +33,9 @@ PUT http://localhost:3001/api/offers/editOffer
 Content-Type: application/json
 
 {
-    "offerId": 3027310,
-    "menorPreco": 0.83,
-    "wholesale_mode": 1,
+    "offerId": 3060941,
+    "menorPreco": 3.70,
+    "wholesale_mode": 0,
     "menorPrecoParaWholesale": 0.97
 }
 
