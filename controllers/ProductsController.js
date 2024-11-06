@@ -499,5 +499,4 @@ module.exports = {
       compareById,
       productsBySlug,
       priceResearcher,
-      newBug,
 }

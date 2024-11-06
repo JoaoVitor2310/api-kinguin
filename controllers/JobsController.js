@@ -2,7 +2,6 @@
 
 const axios = require('axios');
 const token = process.env.TOKEN;
-const url = process.env.URL;
 const nossaURL = process.env.NOSSAURL;
 
 
@@ -19,7 +18,7 @@ const attPrices = async (req, res) => {
     const hora1 = new Date().toLocaleTimeString();
 
     try {
-        var keysInXLSX = [], keysWithHttps = [], jogosAtualizados = [];
+        let jogosAtualizados = [];
 
         const response1 = await axios.get(`${nossaURL}/api/products/productIds`, {
             headers: {

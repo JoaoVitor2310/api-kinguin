@@ -1,5 +1,0 @@
-###
-GET http://localhost:3001/api/sheets/catchFromSheet
-
-###
-GET http://localhost:3001/api/sheets/dataKeysAnalyse/RKG6X-NFZNL-K3E4T

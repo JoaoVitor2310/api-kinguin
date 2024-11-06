@@ -1,6 +1,0 @@
-# API Gamivo "postman"
-###
-GET http://localhost:3001/api/accounts/accountData
-
-###
-GET http://localhost:3001/api/accounts/calculateFinalPrice

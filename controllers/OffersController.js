@@ -117,6 +117,7 @@ const editOffer = async (req, res) => {
             productId !== "129971" && // Internet Cafe Simulator 2
             productId !== "47603" && // LEGO Star Wars: The Skywalker Saga
             productId !== "32064" && // Assassin's Creed Global Ubisoft Connect
+            productId !== "3059" && // Jagged Alliance 2: Wildfire EN/DE/FR/PL/RU Global
             productId !== "283") { // 283: Company of Heroes: Tales of Valor
             
             // Debug
