@@ -175,7 +175,7 @@ const compareById = async (req, res) => {
             if (response.data[0].seller_name !== nomeVendedor) { //Não somos o menor preço
                   
                   const precoContraAPI = checkOthersAPI(response.data); // Checa se tem concorrentes com API
-                  if (precoContraAPI) { // Se tiver, o menor preço já 
+                  if (precoContraAPI) { // Se já tiver  o menor preço
                         return res.json({ id, menorPreco: calcPrecoSemTaxa(precoContraAPI) });
                   }
                   

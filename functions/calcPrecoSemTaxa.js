@@ -4,21 +4,23 @@ const taxaGamivoPorcentagemMenorQue4 = Number(process.env.TAXA_GAMIVO_PORCENTAGE
 const taxaGamivoFixoMenorQue4 = Number(process.env.TAXA_GAMIVO_FIXO_MENOR_QUE4);
 
 const calcPrecoSemTaxa = (menorPreco) => {
-    let menorPrecoSemTaxa;
-    if (menorPreco < 4) {
-          menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMenorQue4) / (1 + taxaGamivoPorcentagemMenorQue4);
-    }
-    else {
-          menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMaiorIgual4) / (1 + taxaGamivoPorcentagemMaiorIgual4)
-    }
+      let menorPrecoSemTaxa;
+      if (menorPreco < 4) {
+            // menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMenorQue4) / (1 + taxaGamivoPorcentagemMenorQue4);
+            menorPrecoSemTaxa = menorPreco - (menorPreco * taxaGamivoPorcentagemMenorQue4) - taxaGamivoFixoMenorQue4;
+      }
+      else {
+            //     menorPrecoSemTaxa = (menorPreco - taxaGamivoFixoMaiorIgual4) / (1 + taxaGamivoPorcentagemMaiorIgual4)
+            menorPrecoSemTaxa = menorPreco - (menorPreco * taxaGamivoPorcentagemMaiorIgual4) - taxaGamivoFixoMaiorIgual4;
+      }
 
-    if (menorPrecoSemTaxa < 0) {
-          menorPrecoSemTaxa = 0.01;
-    }
+      if (menorPrecoSemTaxa < 0) {
+            menorPrecoSemTaxa = 0.01;
+      }
 
-    return menorPrecoSemTaxa;
+      return menorPrecoSemTaxa;
 }
 
 module.exports = {
-    calcPrecoSemTaxa
+      calcPrecoSemTaxa
 }
