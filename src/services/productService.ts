@@ -42,3 +42,19 @@ export async function productIds(): Promise<number[]> { // Lists games that are/
     }
     return productIds;
 }
+
+export async function getProductIdBySlug(slug: string): Promise<number> {
+    try {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/products/by-slug/${slug}`, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+
+        const { id } = response.data;
+        return id;
+    } catch (error) {
+        console.error("Error fetching product by slug:", error);
+        throw new Error('Failed to fetch product ID by slug.');
+    }
+}
