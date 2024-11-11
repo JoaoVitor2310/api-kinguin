@@ -1,28 +1,59 @@
-# API Gamivo
 
-### Sobre o projeto:
-Cliente: CarcaDeals  
-Stack: Node.js, Javascript, Axios, Node-cron, Deploy, Linux, VPS(máquina virtual), SSH.  
-Quando fui abordado sobre a criação de uma API para atualizar preços dos jogos em um marketplace achei que seria uma ótima oportunidade para colocar os meus conhecimentos em prática, logo decidi topar e iniciar os trabalhos.  
-Essa API tem o objetivo de atualizar os preços dos jogos ofertados pelo cliente no site Gamivo.com, ele pediu para que fosse inserida algumas regras, como não diminuir o valor muito abaixo do menor concorrente, não considerasse abaixar se o preço tivesse muito abaixo dos demais concorrentes, não diminuir se o concorrente fosse um novato no site e também não disputar o preço com outras API's para não abaixar demais o preço.  
+<h1 align="center" style="font-weight: bold;"> Automação de Preços na Gamivo 💻</h1>
 
-#### Todos esses requisitos foram cumpridos e a API está rodando em produção em uma máquina virtual na Hostinger.
+<p align="center">
+ <a href="#about">Problema e contextualização</a> • 
+ <a href="#technologies">Tecnologias utilizadas</a> • 
+  <a href="#started">Como executar</a> •
+  <a href="#routes">API's utilizadas</a> •
+</p>
+
+<p align="center">
+    <b>Script para deixar os preços na venda de jogos sempre o mais baixo possível.</b>
+</p>
 
 
-### Para rodar(Linux Ubuntu/Debian):
+<h2 id="about"> Problema e contextualização </h2>
 
-`sudo apt install -y git nodejs` Git e Node serão necessários para baixar e executar o projeto respectivamente.  
-`git clone https://github.com/JoaoVitor2310/api-gamivo`  
-`cd api-gamivo` Entre no diretório com os arquivos.  
-`npm install`  
-`sudo apt-get install npm` Para instalar o npm.  
-`cp .env-example .env` Não esqueça de inserir todas as variáveis de ambiente.  
-`pm2 start index.js` Para manter a aplicação rodando em segundo plano.   
-Caso tenha erro ao rodar o pm2: `npm install -g pm2`  
-Se for modificar a API: `npm run dev`   
-`pm2 startup` Para finalmente iniciar a API   
+### Imagine-se na seguinte situação 
+Você anuncia mais de 200 jogos em um marketplace(https://www.gamivo.com/) e para vender o jogo mais rapidamente, você deve mantê-lo com o menor preço, ou seja, o mais baixo. Porém, sempre que você abaixa o preço, alguém logo em seguida coloca o preço 1 centavo mais baixo que você, vendendo o jogo no seu lugar. Como manter 200 jogos sempre com o preço mais baixo sem ficar o dia inteiro só fazendo isso?
 
-#### Documentação API Gamivo
+### Solução
+Criar uma API que se comunica com a Gamivo para comparar e atualizar o preço de TODOS os jogos várias vezes ao dia, de forma automatizada.
 
-Exportar - https://www.gamivo.com/api-documentation/public  
-Importar - https://www.gamivo.com/assets/documents/documentation/API/public-api-import.pdf
+### Resultado
+O resultado será que todos os jogos já listados a venda terão os seus preços SEMPRE competitivos, respeitando as regras de venda, como por exemplo identificar preços muito abaixo e identificar quando estamos competindo com outro vendedor que também automatiza os seus preços. Portanto, com esta API o vendedor terá menos trabalho para ficar alterando o preço dos jogos e também terá mais lucro, já que terá o preço mais competitivo.
+
+
+<h2 id="technologies">💻 Stack utilizada</h2>
+
+Recursos utilizados para desenvolver o projeto:
+- **Node.js** - Ambiente de execução JavaScript fora do navegador, essencial para o desenvolvimento de aplicações de servidor e para rodar o projeto de maneira eficiente no backend.
+- **Typescript** - Superset do JavaScript que adiciona tipagem estática, permitindo maior segurança, detecção de erros em tempo de desenvolvimento e melhor estruturação do código.
+- **Axios** - Biblioteca baseada em promises para realizar requisições HTTP, facilitando a comunicação com APIs externas de forma rápida e eficiente.
+
+<h2 id="started">🚀 Primeiros passos</h2>
+
+<h3>Pré-requisitos</h3>
+
+- [NodeJS](https://nodejs.org/en/download/prebuilt-installer)  
+
+
+### Como executar:
+```sh
+git clone https://github.com/JoaoVitor2310/gamivo-carca-deals # Clonar o repositório
+cd gamivo-carca-deals # Entrar no diretório do projeto
+npm install # Instalar as dependências
+npm run dev # Executar o projeto em modo de desenvolvimento
+npm start # Executar o projeto em modo produção
+```
+
+### Deploy:
+Foi realizado deploy dessa API em uma VPS no seguinte endereço: http://191.101.70.89:3001/
+
+<h2 id="routes">📍 API's Utilizadas</h2>
+
+<h3> API Gamivo</h3>
+- https://www.gamivo.com/api-documentation/public   
+
+API fornecida pela GAMIVO para seus vendedores e clientes. Toda a documentação das rotas utilizadas está no link acima.

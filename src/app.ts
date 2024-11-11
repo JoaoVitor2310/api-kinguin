@@ -25,6 +25,10 @@ cron.schedule('0 3,6,8,12,15,18,21,0 * * *', async () => { // Horários de atual
 });
 
 // Usa as rotas importadas
+
 app.use('/api', routes);
+app.get('/', (req, res) => {
+    res.send('Desenvolvido por João Vitor Matos Gouveia: https://www.linkedin.com/in/jo%C3%A3o-vitor-matos-gouveia-14b71437/');
+});
 
 export default app;
