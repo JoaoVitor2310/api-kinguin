@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const taxaWholesale = Number(process.env.taxaWholesale);
+const taxaWholesale = Number(process.env.TAXA_WHOLESALE);
 
 export const wholesaleWithoutFee = (menorPreco: number): number => {
     let menorPrecoSemTaxa;

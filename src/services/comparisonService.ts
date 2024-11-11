@@ -22,7 +22,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
         // return { productId, menorPreco: 1 };
 
 
-        if (response.data[0].seller_name !== process.env.NOME_VENDEDOR) { //Não somos o menor preço
+        if (response.data[0].seller_name !== process.env.SELLERS_NAME) { //Não somos o menor preço
 
             const precoContraAPI = checkOthersAPI(response.data); // Check for competitors with API
             if (precoContraAPI) { // Se já tiver  o menor preço
@@ -37,7 +37,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
             }
 
             for (const produto of response.data) {
-                if (produto.seller_name !== process.env.NOME_VENDEDOR) {
+                if (produto.seller_name !== process.env.SELLERS_NAME) {
                     let ignoreSeller = false; // True = candango, false = vendedor experiente
                     // Obtém o preço de varejo do produto
 
@@ -100,7 +100,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
 
                 if (diferenca >= porcentagemDiferenca) {
                     console.log('SAMFITEIRO!');
-                    if (response.data[1].seller_name == process.env.NOME_VENDEDOR) { // Tem samfiteiro, mas somos o segundo, não altera o preço
+                    if (response.data[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo, não altera o preço
                         console.log('Já somos o segundo melhor preço!');
                         return { productId, menorPreco: -4 };
                     } else { // Tem samfiteiro, mas ele não somos o segundo, altera o preço
@@ -180,7 +180,7 @@ export async function bestPriceResearcher(productId: number): Promise<any> {
     // Descobrir qual é o menor preço que ele está sendo vendido
     let menorPrecoSemCandango = Number.MAX_SAFE_INTEGER, menorPrecoTotal = Number.MAX_SAFE_INTEGER, menorPreco, qtdCandango = 0, offerId, segundoMenorPreco;
 
-    if (response.data[0].seller_name !== process.env.NOME_VENDEDOR) { // Nós não somos o menor preço
+    if (response.data[0].seller_name !== process.env.SELLERS_NAME) { // Nós não somos o menor preço
 
         //Separar caso que só nós estamos vendendo
         if (response.data[1]) {
@@ -188,7 +188,7 @@ export async function bestPriceResearcher(productId: number): Promise<any> {
         }
 
         for (const produto of response.data) {
-            if (produto.seller_name !== process.env.NOME_VENDEDOR) {
+            if (produto.seller_name !== process.env.SELLERS_NAME) {
                 let ignoreSeller = false; // True = candango, false = vendedor experiente
                 // Obtém o preço de varejo do produto
 

@@ -3,7 +3,7 @@ dotenv.config();
 const sellersToIgnore = ['Buy-n-Play', 'Playtime']; // Ignore these sellers for price increase
 
 export const checkOthersAPI = (responseData: any) => { // If we're in second place and the first seller is in the ignored list and uses an instant API
-    if (sellersToIgnore.includes(responseData[0].seller_name) && responseData[1].seller_name == process.env.NOME_VENDEDOR) {
+    if (sellersToIgnore.includes(responseData[0].seller_name) && responseData[1].seller_name == process.env.SELLERS_NAME) {
 
         const first = responseData[0].retail_price; // Price of the first (API seller)
         const second = responseData[1].retail_price; // Our price
