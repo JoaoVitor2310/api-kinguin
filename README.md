@@ -1,59 +1,68 @@
-
 <h1 align="center" style="font-weight: bold;"> Automação de Preços na Gamivo 💻</h1>
 
 <p align="center">
- <a href="#about">Problema e contextualização</a> • 
- <a href="#technologies">Tecnologias utilizadas</a> • 
-  <a href="#started">Como executar</a> •
-  <a href="#routes">API's utilizadas</a> •
+ <a href="#problema-e-contextualizacao">Problema e Contextualização</a> • 
+ <a href="#tecnologias-utilizadas">Tecnologias Utilizadas</a> • 
+ <a href="#primeiros-passos">Como Executar</a> •
+ <a href="#apis-utilizadas">APIs Utilizadas</a> 
 </p>
 
-<p align="center">
-    <b>Script para deixar os preços na venda de jogos sempre o mais baixo possível.</b>
-</p>
+**Script para manter os preços dos jogos sempre o mais competitivo possível.**
 
+---
 
-<h2 id="about"> Problema e contextualização </h2>
+## 📝 Problema e Contextualização
 
-### Imagine-se na seguinte situação 
-Você anuncia mais de 200 jogos em um marketplace(https://www.gamivo.com/) e para vender o jogo mais rapidamente, você deve mantê-lo com o menor preço, ou seja, o mais baixo. Porém, sempre que você abaixa o preço, alguém logo em seguida coloca o preço 1 centavo mais baixo que você, vendendo o jogo no seu lugar. Como manter 200 jogos sempre com o preço mais baixo sem ficar o dia inteiro só fazendo isso?
+### Cenário:
+Imagine a seguinte situação: você tem mais de 200 jogos listados no marketplace [Gamivo](https://www.gamivo.com/), e deseja acelerar as vendas mantendo o menor preço. No entanto, sempre que você reduz o valor, outro vendedor logo coloca o preço 1 centavo abaixo, levando a venda no seu lugar. Como manter os preços dos 200 jogos sempre atualizados sem precisar monitorá-los manualmente o tempo todo?
 
-### Solução
-Criar uma API que se comunica com a Gamivo para comparar e atualizar o preço de TODOS os jogos várias vezes ao dia, de forma automatizada.
+### Solução:
+A solução é uma API automatizada que se conecta à Gamivo, compara os preços de todos os jogos e ajusta automaticamente o valor para mantê-los competitivos. Esse processo é realizado várias vezes ao dia, permitindo que os preços se adaptem constantemente ao mercado.
 
-### Resultado
-O resultado será que todos os jogos já listados a venda terão os seus preços SEMPRE competitivos, respeitando as regras de venda, como por exemplo identificar preços muito abaixo e identificar quando estamos competindo com outro vendedor que também automatiza os seus preços. Portanto, com esta API o vendedor terá menos trabalho para ficar alterando o preço dos jogos e também terá mais lucro, já que terá o preço mais competitivo.
+### Resultado:
+Com essa API, os jogos estarão sempre com preços competitivos, respeitando as regras do marketplace e monitorando para evitar valores muito abaixo do esperado. Essa automação reduz o trabalho manual e potencializa o lucro, já que os jogos estarão sempre no topo da competitividade de preços.
 
+---
 
-<h2 id="technologies">💻 Stack utilizada</h2>
+## 💻 Tecnologias Utilizadas
 
-Recursos utilizados para desenvolver o projeto:
-- **Node.js** - Ambiente de execução JavaScript fora do navegador, essencial para o desenvolvimento de aplicações de servidor e para rodar o projeto de maneira eficiente no backend.
-- **Typescript** - Superset do JavaScript que adiciona tipagem estática, permitindo maior segurança, detecção de erros em tempo de desenvolvimento e melhor estruturação do código.
-- **Axios** - Biblioteca baseada em promises para realizar requisições HTTP, facilitando a comunicação com APIs externas de forma rápida e eficiente.
+O projeto foi desenvolvido utilizando:
 
-<h2 id="started">🚀 Primeiros passos</h2>
+- **Node.js**: Ambiente de execução JavaScript para backend, ideal para o desenvolvimento de APIs escaláveis e rápidas.
+- **TypeScript**: Superset do JavaScript que adiciona tipagem estática, garantindo maior segurança no desenvolvimento e facilitando a manutenção do código.
+- **Axios**: Biblioteca para realizar requisições HTTP, essencial para comunicação com APIs externas de forma simples e eficiente.
 
-<h3>Pré-requisitos</h3>
+---
 
-- [NodeJS](https://nodejs.org/en/download/prebuilt-installer)  
+## 🚀 Primeiros Passos
 
+### Pré-requisitos:
+- [NodeJS](https://nodejs.org/en/download/) deve estar instalado.
 
 ### Como executar:
-```sh
-git clone https://github.com/JoaoVitor2310/gamivo-carca-deals # Clonar o repositório
-cd gamivo-carca-deals # Entrar no diretório do projeto
-npm install # Instalar as dependências
-npm run dev # Executar o projeto em modo de desenvolvimento
-npm start # Executar o projeto em modo produção
+```bash
+# Clone o repositório
+git clone https://github.com/JoaoVitor2310/gamivo-carca-deals
+
+# Navegue até o diretório do projeto
+cd gamivo-carca-deals
+
+# Instale as dependências
+npm install
+
+# Execute o projeto em modo de desenvolvimento
+npm run dev
+
+# Para executar em modo de produção
+npm start
 ```
 
 ### Deploy:
-Foi realizado deploy dessa API em uma VPS no seguinte endereço: http://191.101.70.89:3001/
+A API está hospedada em uma VPS e pode ser acessada pelo endereço: http://191.101.70.89:3001/
 
 <h2 id="routes">📍 API's Utilizadas</h2>
 
-<h3> API Gamivo</h3>
-- https://www.gamivo.com/api-documentation/public   
+<h3> Gamivo API</h3>
+- Documentação: https://www.gamivo.com/api-documentation/public   
 
-API fornecida pela GAMIVO para seus vendedores e clientes. Toda a documentação das rotas utilizadas está no link acima.
+A Gamivo fornece essa API pública para seus vendedores e clientes. A documentação completa das rotas está disponível no link acima, detalhando as chamadas necessárias para gerenciar os preços dos produtos.

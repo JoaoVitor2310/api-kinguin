@@ -57,7 +57,7 @@ export async function editOffer(dataToEdit: ICompareResult): Promise<boolean> {
         }
 
         try {
-            const response = await axios.put(`${process.env.url}/api/public/v1/offers/${offerId}`, body, {
+            const response = await axios.put(`${process.env.URL}/api/public/v1/offers/${offerId}`, body, {
                 headers: {
                     'Authorization': `Bearer ${process.env.TOKEN}`
                 },
