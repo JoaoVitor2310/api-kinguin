@@ -50,7 +50,7 @@ cd gamivo-carca-deals
 # Instale as dependências
 npm install
 
-# Execute o projeto em modo de desenvolvimento
+# Para executar o projeto em modo de desenvolvimento
 npm run dev
 
 # Para executar em modo de produção
