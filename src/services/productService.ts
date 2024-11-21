@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IGameToList } from "../interfaces/IGameToList";
 
 export async function productIds(): Promise<number[]> { // Lists games that are/were for sale; there may be games with status 0.
     let offset = 0, limit = 100;
@@ -56,5 +57,16 @@ export async function getProductIdBySlug(slug: string): Promise<number> {
     } catch (error) {
         console.error("Error fetching product by slug:", error);
         throw new Error('Failed to fetch product ID by slug.');
+    }
+}
+
+export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList[]> {
+    try {
+        const response = await axios.get(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/when-to-sell`);
+        console.log(response.data.data);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error fetching sistema estoque:", error);
+        throw new Error('Failed to fetch product sistema estoque.');
     }
 }
