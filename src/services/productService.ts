@@ -63,7 +63,6 @@ export async function getProductIdBySlug(slug: string): Promise<number> {
 export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList[]> {
     try {
         const response = await axios.get(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/when-to-sell`);
-        console.log(response.data.data);
         return response.data.data;
     } catch (error) {
         console.error("Error fetching sistema estoque:", error);

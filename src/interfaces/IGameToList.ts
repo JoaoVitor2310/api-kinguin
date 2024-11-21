@@ -3,4 +3,5 @@ export interface IGameToList {
     minimoParaVenda: string;
     chaveRecebida: string;
     nomeJogo: string;
+    dataAdquirida: string;
 }
