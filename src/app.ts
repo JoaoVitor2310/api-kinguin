@@ -24,6 +24,18 @@ cron.schedule('0 3,6,8,12,15,18,21,0 * * *', async () => { // Horários de atual
     timezone: 'America/Sao_Paulo'
 });
 
+// Cron para checar se algum jogo já pode ser listado
+cron.schedule('0 8,18 * * *', async () => { // Horários: 8h e 18h
+    try {
+        await axios.get(`${process.env.THIS_URL}/api/when-to-sell`);
+    } catch (error) {
+        console.error('Erro ao chamar o endpoint when-to-sell:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'America/Sao_Paulo'
+});
+
 // Usa as rotas importadas
 
 app.use('/api', routes);

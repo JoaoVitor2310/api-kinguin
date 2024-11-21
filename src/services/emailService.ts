@@ -28,7 +28,7 @@ export const sendEmail = async (gamesToSell: IGameToList[]) => {
 
         const sendMail = async (transporter: nodemailer.Transporter, mailOptions: nodemailer.SendMailOptions) => {
             try {
-              // await transporter.sendMail(mailOptions);
+              await transporter.sendMail(mailOptions);
               // console.log(formatedGames);
               console.log('Email enviado.')
             } catch (error) {
