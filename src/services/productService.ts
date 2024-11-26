@@ -1,5 +1,6 @@
 import axios from "axios";
 import { IGameToList } from "../interfaces/IGameToList";
+import { IGamivoProduct } from "../interfaces/IGamivoProduct";
 
 export async function productIds(): Promise<number[]> { // Lists games that are/were for sale; there may be games with status 0.
     let offset = 0, limit = 100;
@@ -67,5 +68,19 @@ export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList
     } catch (error) {
         console.error("Error fetching sistema estoque:", error);
         throw new Error('Failed to fetch product sistema estoque.');
+    }
+}
+
+export async function listProducts(): Promise<IGamivoProduct[]> {
+    try {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/products`, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching products from Gamivo:", error);
+        throw new Error('Failed to fetch product products from Gamivo.');
     }
 }

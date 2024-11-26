@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { ICompareResult } from "../interfaces/ICompareResult";
 import { priceWithoutFee } from "../helpers/priceWithoutFee";
 import { checkOthersAPI } from "../helpers/checkOthersAPI";
+import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers";
 
 export async function compareById(productId: number): Promise<ICompareResult> {
     // Comparar o preço dos concorrentes pelo id do jogo e descobrir qual é o menor preço
@@ -276,4 +277,43 @@ export async function bestPriceResearcher(productId: number): Promise<any> {
             return response.data[0].retail_price; // alterar pro price-researcher?
         }
     }
+}
+
+export function bestRetailPriceWithoutSamfiteiro(offers: IGamivoProductOffers[]): number {
+    if(offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
+
+
+    const menorPreco = offers[0].retail_price;
+    const segundoMenorPreco = offers[1].retail_price;
+
+
+    const diferenca = segundoMenorPreco - menorPreco;
+    let porcentagemDiferenca;
+
+    // Lógica para os samfiteiros
+    if (segundoMenorPreco > 1.0) porcentagemDiferenca = 0.1 * segundoMenorPreco; // Preço acima de 1, 10% de diferença para ser samfiteiro
+    else porcentagemDiferenca = 0.05 * segundoMenorPreco; // Preço abaixo de 1, 5% de diferença para ser samfiteiro
+
+    if (diferenca >= porcentagemDiferenca) {
+        console.log('SAMFITEIRO NA FUNÇÃO!');
+        if (offers[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo
+            return offers[1].retail_price;
+        } else { // Tem samfiteiro, mas não somos o segundo
+            return offers[1].retail_price;
+        }
+    }
+    return offers[0].retail_price;
+}
+
+export function bestWholesalePrice(offers: IGamivoProductOffers[]): number {
+    if(offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
+    
+    let lowestPrice = Number.MAX_SAFE_INTEGER;
+
+    for (const offer of offers) {
+        if (offer.wholesale_price_tier_one < lowestPrice) {
+            lowestPrice = offer.wholesale_price_tier_one;
+        }
+    }
+    return lowestPrice;
 }

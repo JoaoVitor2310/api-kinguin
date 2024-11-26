@@ -1,6 +1,8 @@
 import axios from "axios";
 import { wholesaleWithoutFee } from "../helpers/wholesaleWithoutFee";
 import { ICompareResult } from "../interfaces/ICompareResult";
+import { IGamivoProduct } from "../interfaces/IGamivoProduct";
+import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers";
 
 export async function editOffer(dataToEdit: ICompareResult): Promise<boolean> {
     const { productId, menorPreco, offerId, wholesale_mode, menorPrecoParaWholesale } = dataToEdit; // Values that will not be changed
@@ -77,5 +79,20 @@ export async function editOffer(dataToEdit: ICompareResult): Promise<boolean> {
     } else {
         console.log('We already have the best price.');
         return false;
+    }
+}
+
+export async function productOffers(productId: number): Promise<IGamivoProductOffers[]> {
+    try {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/products/${productId}/offers`, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        // console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching products from Gamivo:", error);
+        throw new Error('Failed to fetch product products from Gamivo.');
     }
 }
