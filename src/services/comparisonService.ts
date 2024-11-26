@@ -280,12 +280,10 @@ export async function bestPriceResearcher(productId: number): Promise<any> {
 }
 
 export function bestRetailPriceWithoutSamfiteiro(offers: IGamivoProductOffers[]): number {
-    if(offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
-
+    if (offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
 
     const menorPreco = offers[0].retail_price;
     const segundoMenorPreco = offers[1].retail_price;
-
 
     const diferenca = segundoMenorPreco - menorPreco;
     let porcentagemDiferenca;
@@ -294,26 +292,36 @@ export function bestRetailPriceWithoutSamfiteiro(offers: IGamivoProductOffers[])
     if (segundoMenorPreco > 1.0) porcentagemDiferenca = 0.1 * segundoMenorPreco; // Preço acima de 1, 10% de diferença para ser samfiteiro
     else porcentagemDiferenca = 0.05 * segundoMenorPreco; // Preço abaixo de 1, 5% de diferença para ser samfiteiro
 
-    if (diferenca >= porcentagemDiferenca) {
-        console.log('SAMFITEIRO NA FUNÇÃO!');
-        if (offers[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo
-            return offers[1].retail_price;
-        } else { // Tem samfiteiro, mas não somos o segundo
-            return offers[1].retail_price;
-        }
-    }
-    return offers[0].retail_price;
+    if (diferenca >= porcentagemDiferenca) return offers[1].retail_price - 0.01;
+
+    return offers[0].retail_price - 0.01;
 }
 
 export function bestWholesalePrice(offers: IGamivoProductOffers[]): number {
-    if(offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
-    
+    if (offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
+
     let lowestPrice = Number.MAX_SAFE_INTEGER;
 
     for (const offer of offers) {
-        if (offer.wholesale_price_tier_one < lowestPrice) {
+        if (offer.wholesale_mode == 1 && offer.stock_available > 9 && offer.wholesale_price_tier_one < lowestPrice) {
             lowestPrice = offer.wholesale_price_tier_one;
         }
     }
     return lowestPrice;
+}
+
+export function hasMinimumProfit(retailPrice: number, wholesalePrice: number): boolean {
+    const investimentoWholesale = wholesalePrice * 10; // Minimo que dá para comprar é 10
+    const faturamentoRetail = priceWithoutFee(retailPrice) * 10;
+    const lucro = faturamentoRetail - investimentoWholesale; // Lucro que será obtido
+    const lucroMinimo = 0.2 * investimentoWholesale; // Lucro mínimo com base no investimento
+    if (lucro >= lucroMinimo) {
+        console.log("COMPRA");
+        console.log("Lucro: " + lucro);
+        console.log("Wholesale: " + wholesalePrice);
+        console.log("Retail: " + retailPrice);
+        return true;
+    }
+
+    return false;
 }

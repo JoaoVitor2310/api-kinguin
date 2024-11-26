@@ -71,9 +71,9 @@ export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList
     }
 }
 
-export async function listProducts(): Promise<IGamivoProduct[]> {
+export async function listProducts(offset: number = 0, limit: number = 100): Promise<IGamivoProduct[]> {
     try {
-        const response = await axios.get(`${process.env.URL}/api/public/v1/products`, {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/products?offset=${offset}&limit=${limit}`, {
             headers: {
                 'Authorization': `Bearer ${process.env.TOKEN}`
             },

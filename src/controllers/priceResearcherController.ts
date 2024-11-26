@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getProductIdBySlug, listProducts } from '../services/productService';
-import { bestPriceResearcher, bestRetailPriceWithoutSamfiteiro, bestWholesalePrice, bestWholesalePrice } from '../services/comparisonService';
+import { bestPriceResearcher, bestRetailPriceWithoutSamfiteiro, bestWholesalePrice, hasMinimumProfit } from '../services/comparisonService';
 import { IGamivoProduct } from '../interfaces/IGamivoProduct';
 import { productOffers } from '../services/offerService';
 
@@ -29,45 +29,47 @@ export const priceWholesale = async (req: Request, res: Response): Promise<void>
 
         // Pegar todos os product ids da gamivo || pegar todos da página atual
 
-        let products: IGamivoProduct[] = [];
+        let offset = 0, limit = 100, isDone = false;
 
-        products = await listProducts();
-        // console.log(products);
+        while (!isDone) {
+            let products: IGamivoProduct[] = await listProducts(offset, limit);
 
-        // Iniciar loop
-
-        for (const product of products) {
-            console.log('ID: ' + product.id);
-            const offers = await productOffers(product.id);
-            
-            if(offers.length == 0) continue; // Unavailable game
-
-
-            const retailPrice = bestRetailPriceWithoutSamfiteiro(offers);
-            console.log("Retail: " + retailPrice);
-            
-            const wholesalePrice = bestWholesalePrice(offers);
-            console.log("Wholesale: " + wholesalePrice);
-
-            const investimentoWholesale = wholesalePrice * 10;
-            const faturamentoretail = retailPrice * 10;
-
-            const lucro = faturamentoretail - investimentoWholesale;
-            const lucroMinimo = 0.2 * investimentoWholesale;
-            if (lucro >= lucroMinimo) {
-                console.log("AQUI");
-                console.log("Lucro: " + lucro);
-                gamesToBuy.push(product);
+            if (products.length == 0) { // This is where the while loop ends
+                isDone = true;
+                return;
             }
+
+
+
+
+            // Iniciar loop
+
+            for (const product of products) {
+                console.log('ID: ' + product.id);
+                const offers = await productOffers(product.id);
+
+                if (offers.length == 0) continue; // Unavailable game
+
+
+                const retailPrice = bestRetailPriceWithoutSamfiteiro(offers);
+                // console.log("Retail: " + retailPrice);
+
+                // Procurar por vendedores que vendam por wholesale
+                const wholesalePrice = bestWholesalePrice(offers);
+                // console.log("Wholesale: " + wholesalePrice);
+
+                // Checar o gênero(as taxas mudam)
+                const hasSoftware = ["Antivirus", "Software", "Windows"].some(item => product.genres.includes(item));
+
+                if (hasSoftware) continue;
+
+                // Checar se vale a pena comprar no whole e vendar no retail. Se sim, adicionar a um array
+                if (hasMinimumProfit(retailPrice, wholesalePrice)) gamesToBuy.push(product);
+
+            }
+
+            offset += 100;
         }
-
-        // Checar o gênero(as taxas mudam)
-
-        // Procurar por vendedores que vendam por wholesale
-
-        // Checar se vale a pena comprar no whole e vendar no retail
-
-        // Se sim, adicionar a um array
 
         // Finaliza loop
 

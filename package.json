@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch src --exec ts-node --transpile-only src/server.ts",
+    "dev": "cls && nodemon --watch src --exec ts-node --transpile-only src/server.ts",
     "build": "tsc",
     "start": "npm run build && node dist/server.js"
   },
