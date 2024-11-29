@@ -1,6 +1,6 @@
 // src/routes/priceResearcher.ts
 import { Router } from 'express';
-import { whenToSell } from '../controllers/whenToSellController';
+import { whenToSell } from '../controllers/whenToSellController.js';
 
 const router = Router();
 

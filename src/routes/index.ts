@@ -1,8 +1,8 @@
 // src/routes/index.ts
 import { Router } from 'express';
-import updateOffersRoute from './updateOffers';
-import priceResearcherRoute from './priceResearcher';
-import whenToSellRoute from './whenToSell';
+import updateOffersRoute from './updateOffers.js';
+import priceResearcherRoute from './priceResearcher.js';
+import whenToSellRoute from './whenToSell.js';
 
 const router = Router();
 

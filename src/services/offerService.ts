@@ -1,8 +1,8 @@
 import axios from "axios";
-import { wholesaleWithoutFee } from "../helpers/wholesaleWithoutFee";
-import { ICompareResult } from "../interfaces/ICompareResult";
-import { IGamivoProduct } from "../interfaces/IGamivoProduct";
-import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers";
+import { wholesaleWithoutFee } from "../helpers/wholesaleWithoutFee.js";
+import { ICompareResult } from "../interfaces/ICompareResult.js";
+import { IGamivoProduct } from "../interfaces/IGamivoProduct.js";
+import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers.js";
 
 export async function editOffer(dataToEdit: ICompareResult): Promise<boolean> {
     const { productId, menorPreco, offerId, wholesale_mode, menorPrecoParaWholesale } = dataToEdit; // Values that will not be changed

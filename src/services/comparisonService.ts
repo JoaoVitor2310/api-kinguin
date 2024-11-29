@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios";
-import { ICompareResult } from "../interfaces/ICompareResult";
-import { priceWithoutFee } from "../helpers/priceWithoutFee";
-import { checkOthersAPI } from "../helpers/checkOthersAPI";
-import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers";
-import { giftCardWithoutFee } from "../helpers/giftCardWithoutFee";
+import { ICompareResult } from "../interfaces/ICompareResult.js";
+import { priceWithoutFee } from "../helpers/priceWithoutFee.js";
+import { checkOthersAPI } from "../helpers/checkOthersAPI.js";
+import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers.js";
+import { giftCardWithoutFee } from "../helpers/giftCardWithoutFee.js";
 
 export async function compareById(productId: number): Promise<ICompareResult> {
     // Comparar o preço dos concorrentes pelo id do jogo e descobrir qual é o menor preço

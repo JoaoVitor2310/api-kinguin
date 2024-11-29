@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { getProductIdBySlug, getProductsToListFromSistemaEstoque } from '../services/productService';
-import { bestPriceResearcher, compareById } from '../services/comparisonService';
-import { priceWithFee } from '../helpers/priceWithFee';
-import { IGameToList } from '../interfaces/IGameToList';
-import { sendEmail } from '../services/emailService';
-import { isDateOlderThanMonths } from '../helpers/isDateOlderThanEightMonths';
+import { getProductIdBySlug, getProductsToListFromSistemaEstoque } from '../services/productService.js';
+import { bestPriceResearcher, compareById } from '../services/comparisonService.js';
+import { priceWithFee } from '../helpers/priceWithFee.js';
+import { IGameToList } from '../interfaces/IGameToList.js';
+import { sendEmail } from '../services/emailService.js';
+import { isDateOlderThanMonths } from '../helpers/isDateOlderThanEightMonths.js';
 
 export const whenToSell = async (req: Request, res: Response): Promise<void> => {
     const gamesToSell: IGameToList[] = [];

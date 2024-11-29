@@ -1,5 +1,5 @@
 import express from 'express';
-import routes from './routes';
+import routes from './routes/index.js';
 import cron from 'node-cron';
 import dotenv from 'dotenv';
 import axios from 'axios';

@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { clearDLC } from "../helpers/clearDLC";
-import { clearString } from "../helpers/clearString";
-import { clearRegionAndLanguage } from "../helpers/clearRegionAndLanguage";
+import { clearDLC } from "../helpers/clearDLC.js";
+import { clearString } from "../helpers/clearString.js";
+import { clearRegionAndLanguage } from "../helpers/clearRegionAndLanguage.js";
 
 export async function searchPeekPopularity(searchString: string): Promise<number> {
     try {

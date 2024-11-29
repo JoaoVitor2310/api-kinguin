@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { getProductIdBySlug, listProducts } from '../services/productService';
-import { bestPriceResearcher, bestRetailPriceWithoutSamfiteiro, bestWholesalePrice, hasMinimumProfit } from '../services/comparisonService';
-import { IGamivoProduct } from '../interfaces/IGamivoProduct';
-import { productOffers } from '../services/offerService';
-import { searchPeekPopularity } from '../services/browserService';
+import { getProductIdBySlug, listProducts } from '../services/productService.js';
+import { bestPriceResearcher, bestRetailPriceWithoutSamfiteiro, bestWholesalePrice, hasMinimumProfit } from '../services/comparisonService.js';
+import { IGamivoProduct } from '../interfaces/IGamivoProduct.js';
+import { productOffers } from '../services/offerService.js';
+import { searchPeekPopularity } from '../services/browserService.js';
 import pLimit from 'p-limit';
-import { sendEmailPrice2 } from '../services/emailService';
+import { sendEmailPrice2 } from '../services/emailService.js';
 
 
 export const priceResearcher = async (req: Request, res: Response): Promise<void> => {

@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { IGameToList } from '../interfaces/IGameToList';
+import { IGameToList } from '../interfaces/IGameToList.js';
 
 
 export const sendEmail = async (gamesToSell: IGameToList[]) => {

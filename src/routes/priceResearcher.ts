@@ -1,6 +1,6 @@
 // src/routes/priceResearcher.ts
 import { Router } from 'express';
-import { priceResearcher, priceWholesale } from '../controllers/priceResearcherController';
+import { priceResearcher, priceWholesale } from '../controllers/priceResearcherController.js';
 
 const router = Router();
 

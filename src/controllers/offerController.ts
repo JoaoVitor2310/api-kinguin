@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { productIds } from '../services/productService';
-import { compareById } from '../services/comparisonService';
-import { editOffer } from '../services/offerService';
+import { productIds } from '../services/productService.js';
+import { compareById } from '../services/comparisonService.js';
+import { editOffer } from '../services/offerService.js';
 
 export const updateOffers = async (req: Request, res: Response) => {
     const updatedGames: number[] = [];

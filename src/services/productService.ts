@@ -1,6 +1,6 @@
 import axios from "axios";
-import { IGameToList } from "../interfaces/IGameToList";
-import { IGamivoProduct } from "../interfaces/IGamivoProduct";
+import { IGameToList } from "../interfaces/IGameToList.js";
+import { IGamivoProduct } from "../interfaces/IGamivoProduct.js";
 
 export async function productIds(): Promise<number[]> { // Lists games that are/were for sale; there may be games with status 0.
     let offset = 0, limit = 100;
@@ -81,7 +81,8 @@ export async function listProducts(offset: number = 0, limit: number = 100): Pro
         // console.log('offset: ' + offset);
         return response.data;
     } catch (error) {
-        console.error("Error fetching products from Gamivo:", error);
-        throw new Error('Failed to fetch product products from Gamivo.');
+        // console.error("Error fetching products from Gamivo:", error);
+        // throw new Error('Failed to fetch product products from Gamivo.');
+        return [];
     }
 }
