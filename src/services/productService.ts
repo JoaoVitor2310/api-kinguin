@@ -78,6 +78,7 @@ export async function listProducts(offset: number = 0, limit: number = 100): Pro
                 'Authorization': `Bearer ${process.env.TOKEN}`
             },
         });
+        // console.log('offset: ' + offset);
         return response.data;
     } catch (error) {
         console.error("Error fetching products from Gamivo:", error);

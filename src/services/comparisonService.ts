@@ -3,6 +3,7 @@ import { ICompareResult } from "../interfaces/ICompareResult";
 import { priceWithoutFee } from "../helpers/priceWithoutFee";
 import { checkOthersAPI } from "../helpers/checkOthersAPI";
 import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers";
+import { giftCardWithoutFee } from "../helpers/giftCardWithoutFee";
 
 export async function compareById(productId: number): Promise<ICompareResult> {
     // Comparar o preço dos concorrentes pelo id do jogo e descobrir qual é o menor preço
@@ -303,25 +304,36 @@ export function bestWholesalePrice(offers: IGamivoProductOffers[]): number {
     let lowestPrice = Number.MAX_SAFE_INTEGER;
 
     for (const offer of offers) {
-        if (offer.wholesale_mode == 1 && offer.stock_available > 9 && offer.wholesale_price_tier_one < lowestPrice) {
+        if (offer.wholesale_mode != 0 && offer.stock_available > 9 && offer.wholesale_price_tier_one < lowestPrice) {
             lowestPrice = offer.wholesale_price_tier_one;
         }
     }
     return lowestPrice;
 }
 
-export function hasMinimumProfit(retailPrice: number, wholesalePrice: number): boolean {
+export function hasMinimumProfit(retailPrice: number, wholesalePrice: number, fee: string = 'game'): number {
     const investimentoWholesale = wholesalePrice * 10; // Minimo que dá para comprar é 10
-    const faturamentoRetail = priceWithoutFee(retailPrice) * 10;
+    let faturamentoRetail = 0;
+
+    switch (fee) {
+        case 'game':
+            faturamentoRetail = priceWithoutFee(retailPrice) * 10;
+            break;
+        case 'giftcard':
+            faturamentoRetail = giftCardWithoutFee(retailPrice) * 10;
+            break;
+    }
+    // let faturamentoRetail = priceWithoutFee(retailPrice) * 10;
     const lucro = faturamentoRetail - investimentoWholesale; // Lucro que será obtido
     const lucroMinimo = 0.2 * investimentoWholesale; // Lucro mínimo com base no investimento
     if (lucro >= lucroMinimo) {
-        console.log("COMPRA");
-        console.log("Lucro: " + lucro);
-        console.log("Wholesale: " + wholesalePrice);
-        console.log("Retail: " + retailPrice);
-        return true;
+        // console.log("COMPRA");
+        // console.log("Lucro: " + lucro);
+        // console.log("Wholesale: " + wholesalePrice);
+        // console.log("Retail: " + retailPrice);
+        return lucro;
     }
 
-    return false;
+    return 0;
+
 }
