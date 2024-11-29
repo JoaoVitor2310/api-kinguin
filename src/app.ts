@@ -36,6 +36,18 @@ cron.schedule('0 8,18 * * *', async () => { // Horários: 8h e 18h
     timezone: 'America/Sao_Paulo'
 });
 
+// Cron para checar price 2
+cron.schedule('* 7 * * *', async () => { // Horários: 7h
+    try {
+        await axios.get(`${process.env.THIS_URL}/api/priceWholesale`);
+    } catch (error) {
+        console.error('Erro ao chamar o endpoint priceWholesale:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'America/Sao_Paulo'
+});
+
 // Usa as rotas importadas
 
 app.use('/api', routes);
