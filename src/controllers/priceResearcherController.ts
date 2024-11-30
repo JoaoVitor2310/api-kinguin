@@ -32,7 +32,7 @@ export const priceWholesale = async (req: Request, res: Response): Promise<void>
     const hora1 = new Date(); // Start time
     const gamesToBuy = [];
     const limit = 100; // Número de elementos por requisição
-    const totalOffsets = 100000; // O offset final é 57700 (dia 28/11/2024), mas estamos indo mais longe para incluir jogos que serão listados futuramente na GAMIVO
+    const totalOffsets = 100000; // O offset final é 57700 e tem 180k produtos (dia 28/11/2024), mas estamos indo mais longe para incluir jogos que serão listados futuramente na GAMIVO
     const batchSize = 1000; // Número máximo de requisições paralelas
 
     const limitConcurrency = pLimit(batchSize); // Busca utilizando concorrência

@@ -67,7 +67,7 @@ export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList
         return response.data.data;
     } catch (error) {
         console.error("Error fetching sistema estoque:", error);
-        throw new Error('Failed to fetch product sistema estoque.');
+        return [];
     }
 }
 
@@ -81,8 +81,7 @@ export async function listProducts(offset: number = 0, limit: number = 100): Pro
         // console.log('offset: ' + offset);
         return response.data;
     } catch (error) {
-        // console.error("Error fetching products from Gamivo:", error);
-        // throw new Error('Failed to fetch product products from Gamivo.');
+        console.error("Error fetching products from Gamivo:", error);
         return [];
     }
 }
