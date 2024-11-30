@@ -3,7 +3,7 @@ import { getProductIdBySlug, getProductsToListFromSistemaEstoque } from '../serv
 import { bestPriceResearcher, compareById } from '../services/comparisonService.js';
 import { priceWithFee } from '../helpers/priceWithFee.js';
 import { IGameToList } from '../interfaces/IGameToList.js';
-import { sendEmail } from '../services/emailService.js';
+import { sendEmail, sendEmail2 } from '../services/emailService.js';
 import { isDateOlderThanMonths } from '../helpers/isDateOlderThanEightMonths.js';
 
 export const whenToSell = async (req: Request, res: Response): Promise<void> => {
@@ -19,6 +19,11 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
             // Ver se o menor preco é maior que o minimoParaVenda
             const bestPrice = await compareById(Number(game.idGamivo));
 
+            if (bestPrice.menorPreco === -5) {
+                sendEmail2([game.idGamivo], 'Jogo com Id Gamivo incorreto', 'Não foi encontrado nenhum jogo com o id gamivo a seguir');
+                continue;
+            }
+
             // Pegar o valor do jogo com as taxas
             const bestPriceWithFee = priceWithFee(bestPrice.menorPreco);
 
@@ -31,7 +36,7 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
 
         // Enviar email avisando os jogos que podem ser listar
         if (gamesToSell.length > 0) {
-            await sendEmail(gamesToSell);
+            await sendEmail2(gamesToSell, `When to Sell`, `Olá, esses foram os jogos identificados para serem vendidos`);
         }
 
         res.status(200).json({ message: 'Games successfully checked.', gamesToSell });

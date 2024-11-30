@@ -24,6 +24,8 @@ export async function compareById(productId: number): Promise<ICompareResult> {
         // return { productId, menorPreco: 1 };
 
 
+        if (response.data.length === 0) return { productId, menorPreco: -5 }; // Produto não encontrado
+
         if (response.data[0].seller_name !== process.env.SELLERS_NAME) { //Não somos o menor preço
 
             const precoContraAPI = checkOthersAPI(response.data); // Check for competitors with API
@@ -148,8 +150,8 @@ export async function compareById(productId: number): Promise<ICompareResult> {
                     menorPreco = menorPreco.toFixed(2)
                     menorPrecoSemTaxa = menorPrecoSemTaxa.toFixed(2);
 
-                    console.log("ESTAMOS COM O PREÇO ABAIXO, IREMOS AUMENTAR!");
-                    console.log(`Para o menorPreco ${menorPreco} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa}`);
+                    // console.log("ESTAMOS COM O PREÇO ABAIXO, IREMOS AUMENTAR!");
+                    // console.log(`Para o menorPreco ${menorPreco} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa}`);
                     return { productId, menorPreco: Number(menorPrecoSemTaxa), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale: Number(menorPreco) };
                 } else {
                     return { productId, menorPreco: -4 };
@@ -160,7 +162,10 @@ export async function compareById(productId: number): Promise<ICompareResult> {
         }
 
     } catch (error: AxiosError | any) {
-        // console.log('Esse é o error.response: ' + error);
+        // console.log(productId);
+        // console.log('Esse é o error.response: ' + error.response);
+        // console.log(error);
+        // console.log('----------------');
         if (error.response.status == 404 || error.response.status == 403) {
             console.log(`Id: ${productId} é de um jogo 'impossível'`)
             return { productId, menorPreco: -1 };
