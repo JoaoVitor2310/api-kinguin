@@ -71,7 +71,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
 
 
             if (qtdCandango >= 3) {
-                console.log(`MAIS DE 3 CANDANGOS NO ID: ${productId} `); // Considera o preço menor independente
+                // console.log(`MAIS DE 3 CANDANGOS NO ID: ${productId} `); // Considera o preço menor independente
                 menorPreco = menorPrecoTotal;
             } else {
                 menorPreco = menorPrecoSemCandango; // Considera SOMENTE os preços dos vendedores experientes
@@ -81,7 +81,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
             menorPreco = menorPrecoTotal; // Não iremos considerar candangos pois também somos um
 
             if (response.data.length == 1 || menorPrecoTotal == Number.MAX_SAFE_INTEGER) {
-                console.log(`Você é o único vendedor do productId: ${productId}`)
+                //console.log(`Único vendedor do productId: ${productId}`)
                 return { productId, menorPreco: -2 }; // Sem concorrentes
             } else {
 
@@ -105,10 +105,10 @@ export async function compareById(productId: number): Promise<ICompareResult> {
                 if (diferenca >= porcentagemDiferenca) {
                     console.log('SAMFITEIRO!');
                     if (response.data[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo, não altera o preço
-                        console.log('Já somos o segundo melhor preço!');
+                        // console.log('Já somos o segundo melhor preço!');
                         return { productId, menorPreco: -4 };
                     } else { // Tem samfiteiro, mas ele não somos o segundo, altera o preço
-                        console.log(`Batendo o preço do segundo melhor preço!`);
+                        // console.log(`Batendo o preço do segundo melhor preço!`);
                         menorPreco = response.data[1].retail_price;
                     }
                 }
@@ -122,7 +122,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
                     menorPrecoSemTaxa = priceWithoutFee(menorPreco);
                 }
 
-                console.log(`Para o menorPreco ${menorPreco.toFixed(2)} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa.toFixed(2)}`);
+                // console.log(`Para o menorPreco ${menorPreco.toFixed(2)} ser listado, o preço sem taxa deve ser: ${menorPrecoSemTaxa.toFixed(2)}`);
 
                 return { productId, menorPreco: Number(menorPrecoSemTaxa.toFixed(2)), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale: Number(menorPreco.toFixed(2)) };
             }
@@ -167,7 +167,7 @@ export async function compareById(productId: number): Promise<ICompareResult> {
         // console.log(error);
         // console.log('----------------');
         if (error.response.status == 404 || error.response.status == 403) {
-            console.log(`Id: ${productId} é de um jogo 'impossível'`)
+            // console.log(`Id: ${productId} é de um jogo 'impossível'`)
             return { productId, menorPreco: -1 };
         } else {
             console.error(error);
