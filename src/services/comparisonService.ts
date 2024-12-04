@@ -5,7 +5,7 @@ import { checkOthersAPI } from "../helpers/checkOthersAPI.js";
 import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers.js";
 import { giftCardWithoutFee } from "../helpers/giftCardWithoutFee.js";
 
-export async function compareById(productId: number): Promise<ICompareResult> {
+export async function compareById(productId: number, consideraSamfit = true): Promise<ICompareResult> {
     // Comparar o preço dos concorrentes pelo id do jogo e descobrir qual é o menor preço
 
     let menorPrecoSemTaxa, qtdCandango = 0, menorPrecoSemCandango = Number.MAX_SAFE_INTEGER, menorPrecoTotal = Number.MAX_SAFE_INTEGER, menorPreco, segundoMenorPreco, offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two;
@@ -34,7 +34,10 @@ export async function compareById(productId: number): Promise<ICompareResult> {
                 return { productId, menorPreco: priceWithoutFee(precoContraAPI) };
             }
 
-            response.data = response.data.filter((offer: { seller_name: string; }) => !sellersToIgnore.includes(offer.seller_name)); // Remove os concorrentes que são para ignorar
+            if(consideraSamfit){
+                response.data = response.data.filter((offer: { seller_name: string; }) => !sellersToIgnore.includes(offer.seller_name)); // Remove os concorrentes que são para ignorar
+            }
+
             //Separar caso que só tem a gente vendendo
             if (response.data[1]) {
                 segundoMenorPreco = response.data[1].retail_price;
@@ -99,20 +102,23 @@ export async function compareById(productId: number): Promise<ICompareResult> {
                 let porcentagemDiferenca;
 
                 // Lógica para os samfiteiros
-                if (segundoMenorPreco > 1.0) porcentagemDiferenca = 0.1 * segundoMenorPreco; // Preço acima de 1, 10% de diferença para ser samfiteiro
-                else porcentagemDiferenca = 0.05 * segundoMenorPreco; // Preço abaixo de 1, 5% de diferença para ser samfiteiro
+                if(!consideraSamfit){
 
-                if (diferenca >= porcentagemDiferenca) {
-                    console.log('SAMFITEIRO!');
-                    if (response.data[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo, não altera o preço
-                        // console.log('Já somos o segundo melhor preço!');
-                        return { productId, menorPreco: -4 };
-                    } else { // Tem samfiteiro, mas ele não somos o segundo, altera o preço
-                        // console.log(`Batendo o preço do segundo melhor preço!`);
-                        menorPreco = response.data[1].retail_price;
+                    if (segundoMenorPreco > 1.0) porcentagemDiferenca = 0.1 * segundoMenorPreco; // Preço acima de 1, 10% de diferença para ser samfiteiro
+                    else porcentagemDiferenca = 0.05 * segundoMenorPreco; // Preço abaixo de 1, 5% de diferença para ser samfiteiro
+                    
+                    if (diferenca >= porcentagemDiferenca) {
+                        console.log('SAMFITEIRO!');
+                        if (response.data[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo, não altera o preço
+                            // console.log('Já somos o segundo melhor preço!');
+                            return { productId, menorPreco: -4 };
+                        } else { // Tem samfiteiro, mas ele não somos o segundo, altera o preço
+                            // console.log(`Batendo o preço do segundo melhor preço!`);
+                            menorPreco = response.data[1].retail_price;
+                        }
                     }
                 }
-
+                    
                 // Calcula o novo preço sem a taxa, a gamivo irá adicionar as taxas dps, e o menorPreco será atingido
                 menorPreco = menorPreco - 0.02;
 

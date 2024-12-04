@@ -17,7 +17,7 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
         // Loop nos jogos
         for (const game of gamesFromAPI) {
             // Ver se o menor preco é maior que o minimoParaVenda
-            const bestPrice = await compareById(Number(game.idGamivo));
+            const bestPrice = await compareById(Number(game.idGamivo), false);
 
             if (bestPrice.menorPreco === -5) {
                 sendEmail2([game.idGamivo], 'Jogo com Id Gamivo incorreto', 'Não foi encontrado nenhum jogo com o id gamivo a seguir');

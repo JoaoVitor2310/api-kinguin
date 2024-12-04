@@ -33,14 +33,14 @@ export const priceWholesale = async (req: Request, res: Response): Promise<void>
     const gamesToBuy = [];
     const limit = 100; // Número de elementos por requisição
     const totalOffsets = 100000; // O offset final é 57700 e tem 180k produtos (dia 28/11/2024), mas estamos indo mais longe para incluir jogos que serão listados futuramente na GAMIVO
-    const batchSize = 1000; // Número máximo de requisições paralelas
+    const batchSize = 10; // Número máximo de requisições paralelas. O MÁXIMO DA GAMIVO É 10
 
     const limitConcurrency = pLimit(batchSize); // Busca utilizando concorrência
 
     try {
         // Calcular os offsets para paralelismo (dividir em batches)
         const offsets = [];
-        for (let offset = 2800; offset <= totalOffsets; offset += 100) { // 2800
+        for (let offset = 57700; offset <= totalOffsets; offset += 100) { // 2800
             offsets.push(offset);
         }
 
@@ -61,7 +61,8 @@ export const priceWholesale = async (req: Request, res: Response): Promise<void>
 
                     if (offers.length == 0) return null; // Unavailable game
 
-                    const retailPrice = bestRetailPriceWithoutSamfiteiro(offers);
+                    // const retailPrice = bestRetailPriceWithoutSamfiteiro(offers);
+                    const retailPrice = offers[0].retail_price - 0.01;
                     const wholesalePrice = bestWholesalePrice(offers);
 
                     const hasSoftware = ["Antivirus", "Software", "Windows"].some(item => product.genres.includes(item)); // Taxa mt alta, não vale a pena
