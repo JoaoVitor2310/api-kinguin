@@ -1,10 +1,11 @@
 // src/routes/priceResearcher.ts
 import { Router } from 'express';
-import { priceResearcher, priceWholesale } from '../controllers/priceResearcherController.js';
+// import { priceResearcher, priceWholesale } from '../controllers/priceResearcherController.js';
+import { priceResearcher } from '../controllers/priceResearcherController.js';
 
 const router = Router();
 
 router.get('/products/priceResearcher/:slug', priceResearcher);
-router.get('/priceWholesale', priceWholesale);
+// router.get('/priceWholesale', priceWholesale);
 
 export default router;
