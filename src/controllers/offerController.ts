@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { productIds } from '../services/productService.js';
 import { compareById } from '../services/comparisonService.js';
-import { editOffer } from '../services/offerService.js';
+import { editOffer, salesHistory } from '../services/offerService.js';
 
 export const updateOffers = async (req: Request, res: Response) => {
     const updatedGames: number[] = [];
@@ -34,3 +34,9 @@ export const updateOffers = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error updating offers.', updatedGames });
     }
 };
+
+export const updateSoldOffers = async (req: Request, res: Response) => {
+    const salesHistor: any = await salesHistory();
+    console.log(salesHistor);
+    res.status(200).json({ message: 'Sales history successfully fetched.', salesHistor: salesHistor });
+}

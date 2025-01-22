@@ -96,3 +96,26 @@ export async function productOffers(productId: number): Promise<IGamivoProductOf
         return [];
     }
 }
+
+export async function salesHistory(): Promise<any> {
+    const filters = {
+        "dateFrom": "2025-01-01",
+        "dateTo": "2025-01-21",
+        "statuses": [
+            "COMPLETED"
+        ]
+    }
+
+    try {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/accounts/sales/history/0/100?filters=${JSON.stringify(filters)}`, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        // console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching sales history from Gamivo:", error);
+        return [];
+    }
+}
