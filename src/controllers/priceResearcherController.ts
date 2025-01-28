@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getProductIdBySlug, listProducts } from '../services/productService.js';
 import { bestPriceResearcher, bestRetailPriceWithoutSamfiteiro, bestWholesalePrice, hasMinimumProfit } from '../services/comparisonService.js';
-import { IGamivoProduct } from '../interfaces/IGamivoProduct.js';
+import { GamivoProduct } from '../types/GamivoProduct.js';
 import { productOffers } from '../services/offerService.js';
 import { searchPeekPopularity } from '../services/browserService.js';
 import pLimit from 'p-limit';

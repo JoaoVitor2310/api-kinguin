@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { getProductIdBySlug, getProductsToListFromSistemaEstoque } from '../services/productService.js';
 import { bestPriceResearcher, compareById } from '../services/comparisonService.js';
 import { priceWithFee } from '../helpers/priceWithFee.js';
-import { IGameToList } from '../interfaces/IGameToList.js';
+import { GameToList } from '../types/GameToList.js';
 import { sendEmail, sendEmail2 } from '../services/emailService.js';
 import { isDateOlderThanMonths } from '../helpers/isDateOlderThanEightMonths.js';
 
 export const whenToSell = async (req: Request, res: Response): Promise<void> => {
-    const gamesToSell: IGameToList[] = [];
+    const gamesToSell: GameToList[] = [];
     try {
 
         // Fazer req

@@ -1,4 +1,4 @@
-export interface IGamivoProduct {
+export type GamivoProduct = {
     id: number;
     name: string;
     slug: string;

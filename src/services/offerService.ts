@@ -1,10 +1,12 @@
 import axios from "axios";
 import { wholesaleWithoutFee } from "../helpers/wholesaleWithoutFee.js";
-import { ICompareResult } from "../interfaces/ICompareResult.js";
-import { IGamivoProduct } from "../interfaces/IGamivoProduct.js";
-import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers.js";
+import { CompareResult } from "../types/CompareResult.js";
+import { GamivoProduct } from "../types/GamivoProduct.js";
+import { GamivoProductOffers } from "../types/GamivoProductOffers.js";
+import { SoldOffer } from "../types/SoldOffer.js";
+import { SalesHistoryResponse } from "../types/SalesHistoryResponse.js";
 
-export async function editOffer(dataToEdit: ICompareResult): Promise<boolean> {
+export async function editOffer(dataToEdit: CompareResult): Promise<boolean> {
     const { productId, menorPreco, offerId, wholesale_mode, menorPrecoParaWholesale } = dataToEdit; // Values that will not be changed
     let { wholesale_price_tier_one, wholesale_price_tier_two } = dataToEdit; // Values that can be changed
     let body;
@@ -82,7 +84,7 @@ export async function editOffer(dataToEdit: ICompareResult): Promise<boolean> {
     }
 }
 
-export async function productOffers(productId: number): Promise<IGamivoProductOffers[]> {
+export async function productOffers(productId: number): Promise<GamivoProductOffers[]> {
     try {
         const response = await axios.get(`${process.env.URL}/api/public/v1/products/${productId}/offers`, {
             headers: {
@@ -97,17 +99,40 @@ export async function productOffers(productId: number): Promise<IGamivoProductOf
     }
 }
 
-export async function salesHistory(): Promise<any> {
+export async function fetchSalesHistory(offset: number = 25): Promise<SalesHistoryResponse | []> {
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+    // Converter para YYYY-MM-DD
+    const todayFormatted = today.toISOString().split('T')[0];
+    const oneMonthAgoFormatted = oneMonthAgo.toISOString().split('T')[0];
+
     const filters = {
-        "dateFrom": "2025-01-01",
-        "dateTo": "2025-01-21",
+        "dateFrom": oneMonthAgoFormatted,
+        "dateTo": todayFormatted,
         "statuses": [
             "COMPLETED"
         ]
     }
 
     try {
-        const response = await axios.get(`${process.env.URL}/api/public/v1/accounts/sales/history/0/100?filters=${JSON.stringify(filters)}`, {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/accounts/sales/history/${offset}/25?filters=${JSON.stringify(filters)}`, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching sales history from Gamivo:", error);
+        return [];
+    }
+}
+
+export async function soldOrderData(order_id: string): Promise<any> {
+    try {
+        const response = await axios.get(`${process.env.URL}/api/public/v1/accounts/sales/order-details/${order_id}`, {
             headers: {
                 'Authorization': `Bearer ${process.env.TOKEN}`
             },

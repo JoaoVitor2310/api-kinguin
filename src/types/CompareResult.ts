@@ -1,4 +1,4 @@
-export interface ICompareResult{
+export type CompareResult = {
     productId: number;
     menorPreco: number;
     offerId?: number; 

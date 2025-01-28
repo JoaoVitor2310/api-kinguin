@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
-import { IGameToList } from '../interfaces/IGameToList.js';
+import { GameToList } from '../types/GameToList.js';
 
 
-export const sendEmail = async (gamesToSell: IGameToList[]) => {
+export const sendEmail = async (gamesToSell: GameToList[]) => {
   const emailPass = process.env.EMAIL_PASS;
   const formatedGames = gamesToSell.map(game => JSON.stringify(game, null, 2)).join('\n');
 

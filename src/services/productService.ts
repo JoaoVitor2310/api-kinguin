@@ -1,6 +1,6 @@
 import axios from "axios";
-import { IGameToList } from "../interfaces/IGameToList.js";
-import { IGamivoProduct } from "../interfaces/IGamivoProduct.js";
+import { GameToList } from "../types/GameToList.js";
+import { GamivoProduct } from "../types/GamivoProduct.js";
 
 export async function productIds(): Promise<number[]> { // Lists games that are/were for sale; there may be games with status 0.
     let offset = 0, limit = 100;
@@ -61,7 +61,7 @@ export async function getProductIdBySlug(slug: string): Promise<number> {
     }
 }
 
-export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList[]> {
+export async function getProductsToListFromSistemaEstoque(): Promise<GameToList[]> {
     try {
         const response = await axios.get(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/when-to-sell`);
         return response.data.data;
@@ -71,7 +71,7 @@ export async function getProductsToListFromSistemaEstoque(): Promise<IGameToList
     }
 }
 
-export async function listProducts(offset: number = 0, limit: number = 100): Promise<IGamivoProduct[]> {
+export async function listProducts(offset: number = 0, limit: number = 100): Promise<GamivoProduct[]> {
     try {
         const response = await axios.get(`${process.env.URL}/api/public/v1/products?offset=${offset}&limit=${limit}`, {
             headers: {

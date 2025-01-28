@@ -1,4 +1,4 @@
-export interface IGameToList {
+export type GameToList = {
     idGamivo: string;
     minimoParaVenda: string;
     chaveRecebida: string;

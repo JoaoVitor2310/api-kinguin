@@ -1,8 +1,8 @@
 import axios, { AxiosError } from "axios";
-import { ICompareResult } from "../interfaces/ICompareResult.js";
+import { CompareResult } from "../types/CompareResult.js";
 import { priceWithoutFee } from "../helpers/priceWithoutFee.js";
 import { checkOthersAPI } from "../helpers/checkOthersAPI.js";
-import { IGamivoProductOffers } from "../interfaces/IGamivoProductOffers.js";
+import { GamivoProductOffers } from "../types/GamivoProductOffers.js";
 import { giftCardWithoutFee } from "../helpers/giftCardWithoutFee.js";
 
 export async function compareById(productId: number, consideraSamfit = true): Promise<ICompareResult> {
@@ -291,7 +291,7 @@ export async function bestPriceResearcher(productId: number): Promise<any> {
     }
 }
 
-export function bestRetailPriceWithoutSamfiteiro(offers: IGamivoProductOffers[]): number {
+export function bestRetailPriceWithoutSamfiteiro(offers: GamivoProductOffers[]): number {
     if (offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
 
     const menorPreco = offers[0].retail_price;
@@ -309,7 +309,7 @@ export function bestRetailPriceWithoutSamfiteiro(offers: IGamivoProductOffers[])
     return offers[0].retail_price - 0.01;
 }
 
-export function bestWholesalePrice(offers: IGamivoProductOffers[]): number {
+export function bestWholesalePrice(offers: GamivoProductOffers[]): number {
     if (offers.length == 1) return offers[0].retail_price; // Só tem 1 vendedor, retorna o preço dele
 
     let lowestPrice = Number.MAX_SAFE_INTEGER;
