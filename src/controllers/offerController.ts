@@ -39,7 +39,7 @@ export const updateOffers = async (req: Request, res: Response) => {
 
 export const updateSoldOffers = async (req: Request, res: Response) => {
     const dataToSend = [];
-    let offset = 50, isDone: boolean = false, total = 0;
+    let offset = 0, isDone: boolean = false, total = 0;
 
     try {
         while (!isDone) {
