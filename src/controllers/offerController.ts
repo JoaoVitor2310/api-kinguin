@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { productIds } from '../services/productService.js';
 import { compareById } from '../services/comparisonService.js';
-import { editOffer, fetchSalesHistory, soldOrderData } from '../services/offerService.js';
+import { editOffer, fetchSalesHistory, sendSoldData, soldOrderData } from '../services/offerService.js';
 import { SoldOffer } from '../types/SoldOffer.js';
 import { SalesHistoryResponse } from '../types/SalesHistoryResponse.js';
 
@@ -41,15 +41,15 @@ export const updateSoldOffers = async (req: Request, res: Response) => {
     const dataToSend = [];
     let offset = 50, isDone: boolean = false, total = 0;
 
-    // while (!isDone) {
+    while (!isDone) {
         const salesHistory: SalesHistoryResponse | [] = await fetchSalesHistory(offset);
         if (Array.isArray(salesHistory) && salesHistory.length === 0) {
             return res.status(400).json({ message: 'Sales history not found.', salesHistory });
         }
 
         const salesHistoryResponse = salesHistory as SalesHistoryResponse;
-        
-        if(salesHistoryResponse.data.length === 0) isDone = true;
+
+        if (salesHistoryResponse.data.length === 0) isDone = true;
 
         for (const offer of salesHistoryResponse.data) {
             const profit = parseFloat((offer.profit + offer.seller_tax - 0.01).toFixed(2));
@@ -64,24 +64,25 @@ export const updateSoldOffers = async (req: Request, res: Response) => {
 
             for (const key of keysData) {
                 keys.push(key.key);
-                // console.log(key);
-                // console.log('-------------');
             }
 
-            // const keys = orderData.keys
             dataToSend.push({ product_name: offer.product_name, profit, saleDate, keys });
-            // console.log(offer.product_name);
-            // console.log(keys);
         }
         offset += 25;
-    // }
+    }
 
-        for (let game of dataToSend) {
-            if(game.keys.length > 0){
-                game.profit = game.profit / game.keys.length;
-            }
+    for (const [index, game] of dataToSend.entries()) {
+        if (game.keys.length > 0) {
+            game.profit = game.profit / game.keys.length;
         }
-    // console.log(dataToSend[0]);
 
-    res.status(200).json({ message: 'Sales history successfully fetched.', dataToSend });
+        // Suzerain
+        // if (game.product_name === 'Suzerain EN Global') {
+        //     console.log('Índice:', index);
+        // }
+    }
+
+    const response = await sendSoldData(dataToSend);
+
+    res.status(200).json({ message: 'Games updated successfully.', response: response.data });
 }

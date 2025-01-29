@@ -122,7 +122,7 @@ export async function fetchSalesHistory(offset: number = 25): Promise<SalesHisto
                 'Authorization': `Bearer ${process.env.TOKEN}`
             },
         });
-        console.log(response.data);
+        // console.log(response.data);
         return response.data;
     } catch (error) {
         console.error("Error fetching sales history from Gamivo:", error);
@@ -137,6 +137,17 @@ export async function soldOrderData(order_id: string): Promise<any> {
                 'Authorization': `Bearer ${process.env.TOKEN}`
             },
         });
+        // console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching sales history from Gamivo:", error);
+        return [];
+    }
+}
+
+export async function sendSoldData(dataToSend: object): Promise<any> {
+    try {
+        const response = await axios.post(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/update-sold-offers`, dataToSend);
         // console.log(response.data);
         return response.data;
     } catch (error) {
