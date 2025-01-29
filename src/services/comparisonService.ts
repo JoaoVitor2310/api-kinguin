@@ -5,7 +5,7 @@ import { checkOthersAPI } from "../helpers/checkOthersAPI.js";
 import { GamivoProductOffers } from "../types/GamivoProductOffers.js";
 import { giftCardWithoutFee } from "../helpers/giftCardWithoutFee.js";
 
-export async function compareById(productId: number, consideraSamfit = true): Promise<ICompareResult> {
+export async function compareById(productId: number, consideraSamfit = true): Promise<CompareResult> {
     // Comparar o preço dos concorrentes pelo id do jogo e descobrir qual é o menor preço
 
     let menorPrecoSemTaxa, qtdCandango = 0, menorPrecoSemCandango = Number.MAX_SAFE_INTEGER, menorPrecoTotal = Number.MAX_SAFE_INTEGER, menorPreco, segundoMenorPreco, offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two;

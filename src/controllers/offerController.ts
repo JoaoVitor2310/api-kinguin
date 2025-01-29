@@ -41,48 +41,53 @@ export const updateSoldOffers = async (req: Request, res: Response) => {
     const dataToSend = [];
     let offset = 50, isDone: boolean = false, total = 0;
 
-    while (!isDone) {
-        const salesHistory: SalesHistoryResponse | [] = await fetchSalesHistory(offset);
-        if (Array.isArray(salesHistory) && salesHistory.length === 0) {
-            return res.status(400).json({ message: 'Sales history not found.', salesHistory });
-        }
+    try {
+        while (!isDone) {
 
-        const salesHistoryResponse = salesHistory as SalesHistoryResponse;
-
-        if (salesHistoryResponse.data.length === 0) isDone = true;
-
-        for (const offer of salesHistoryResponse.data) {
-            const profit = parseFloat((offer.profit + offer.seller_tax - 0.01).toFixed(2));
-
-            const saleDate = offer.created_at.split('UTC')[0];
-
-            const orderData = await soldOrderData(offer.order_id);
-            const orderKeys = Object.keys(orderData.keys!);
-            const pai = orderKeys[0];
-            const keysData = orderData.keys[pai].keys;
-            const keys: string[] = [];
-
-            for (const key of keysData) {
-                keys.push(key.key);
+            const salesHistory: SalesHistoryResponse | [] = await fetchSalesHistory(offset);
+            if (Array.isArray(salesHistory) && salesHistory.length === 0) {
+                return res.status(400).json({ message: 'Sales history not found.', salesHistory });
             }
 
-            dataToSend.push({ product_name: offer.product_name, profit, saleDate, keys });
+            const salesHistoryResponse = salesHistory as SalesHistoryResponse;
+
+            if (salesHistoryResponse.data.length === 0) isDone = true;
+
+            for (const offer of salesHistoryResponse.data) {
+                const profit = parseFloat((offer.profit + offer.seller_tax - 0.01).toFixed(2));
+
+                const saleDate = offer.created_at.split('UTC')[0];
+
+                const orderData = await soldOrderData(offer.order_id);
+                const orderKeys = Object.keys(orderData.keys!);
+                const pai = orderKeys[0];
+                const keysData = orderData.keys[pai].keys;
+                const keys: string[] = [];
+
+                for (const key of keysData) {
+                    keys.push(key.key);
+                }
+
+                dataToSend.push({ product_name: offer.product_name, profit, saleDate, keys });
+            }
+            offset += 25;
         }
-        offset += 25;
-    }
 
-    for (const [index, game] of dataToSend.entries()) {
-        if (game.keys.length > 0) {
-            game.profit = game.profit / game.keys.length;
+        for (const [index, game] of dataToSend.entries()) {
+            if (game.keys.length > 0) {
+                game.profit = game.profit / game.keys.length;
+            }
+
+            // Suzerain
+            // if (game.product_name === 'Suzerain EN Global') {
+            //     console.log('Índice:', index);
+            // }
         }
 
-        // Suzerain
-        // if (game.product_name === 'Suzerain EN Global') {
-        //     console.log('Índice:', index);
-        // }
+        const response = await sendSoldData(dataToSend);
+        return res.status(200).json({ message: 'Games updated successfully.', response: response.data });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error updating offers.' });
     }
-
-    const response = await sendSoldData(dataToSend);
-
-    res.status(200).json({ message: 'Games updated successfully.', response: response.data });
 }
