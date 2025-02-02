@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { productIds } from '../services/productService.js';
+import { productIds, searchByIdGamivo } from '../services/productService.js';
 import { compareById } from '../services/comparisonService.js';
 import { editOffer, fetchSalesHistory, sendSoldData, soldOrderData } from '../services/offerService.js';
 import { SoldOffer } from '../types/SoldOffer.js';
@@ -13,7 +13,25 @@ export const updateOffers = async (req: Request, res: Response) => {
 
         for (const id of ids) {
             const dataToEdit = await compareById(id); // Call comparison function
-            // console.log(dataToEdit);
+            console.log(dataToEdit);
+
+            // Fazer requisiçao e buscar por produtos com o productId == idGamivo 
+            const games = await searchByIdGamivo(id);
+            // console.log(games);
+            let minApi: number = 0.12, maxApi: number = 500;
+
+            if (games.length > 0 && dataToEdit.menorPreco > 0) {
+                minApi = Math.min(...games.map(game => parseFloat(game.minApiGamivo)));
+                maxApi = Math.max(...games.map(game => parseFloat(game.maxApiGamivo)));
+                
+                if (dataToEdit.menorPreco < minApi) {
+                    dataToEdit.menorPreco = minApi;
+                }
+                
+                if (dataToEdit.menorPreco > maxApi) {
+                    dataToEdit.menorPreco = maxApi;
+                }
+            }
             const result = await editOffer(dataToEdit);   // Call offer edit function
 
             if (result) {
