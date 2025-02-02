@@ -88,7 +88,7 @@ export async function listProducts(offset: number = 0, limit: number = 100): Pro
 
 export async function searchByIdGamivo(idGamivo: number): Promise<any[]> {
     try {
-        const response = await axios.get(`${process.env.URL_SISTEMA_ESTOQUE_DEV}/venda-chave-troca/search-by-id-gamivo/${idGamivo}`);
+        const response = await axios.get(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/search-by-id-gamivo/${idGamivo}`);
         return response.data.data;
     } catch (error) {
         console.error(error);
