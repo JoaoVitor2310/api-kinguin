@@ -12,8 +12,8 @@ const PORT = process.env.PORT || 3001;
 // Middleware para usar JSON (opcional)
 app.use(express.json());
 
-cron.schedule('0 3,6,8,12,15,18,21,0 * * *', async () => { // Horários de atualização de preços
-// cron.schedule('* * * * *', async () => { // Horários de atualização de preços
+cron.schedule('5 * * * *', async () => { // Horários de atualização de preços
+// cron.schedule('0 3,6,8,12,15,18,21,0 * * *', async () => { // Horários de atualização de preços
     try {
         await axios.get(`${process.env.THIS_URL}/api/update-offers`);
     } catch (error) {

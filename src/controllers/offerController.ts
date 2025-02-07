@@ -12,8 +12,8 @@ export const updateOffers = async (req: Request, res: Response) => {
         const ids = await productIds(); // Retrieve product IDs
 
         for (const id of ids) {
-            const dataToEdit = await compareById(id); // Call comparison function
-            console.log(dataToEdit);
+            const dataToEdit = await compareById(id, true); // Call comparison function
+            // console.log(dataToEdit);
 
             // Fazer requisiçao e buscar por produtos com o productId == idGamivo 
             const games = await searchByIdGamivo(id);

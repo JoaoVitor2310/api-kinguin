@@ -34,7 +34,7 @@ export async function compareById(productId: number, consideraSamfit = true): Pr
                 return { productId, menorPreco: priceWithoutFee(precoContraAPI) };
             }
 
-            if(consideraSamfit){
+            if (consideraSamfit) {
                 response.data = response.data.filter((offer: { seller_name: string; }) => !sellersToIgnore.includes(offer.seller_name)); // Remove os concorrentes que são para ignorar
             }
 
@@ -102,11 +102,11 @@ export async function compareById(productId: number, consideraSamfit = true): Pr
                 let porcentagemDiferenca;
 
                 // Lógica para os samfiteiros
-                if(!consideraSamfit){
+                if (consideraSamfit) {
 
-                    if (segundoMenorPreco > 1.0) porcentagemDiferenca = 0.1 * segundoMenorPreco; // Preço acima de 1, 10% de diferença para ser samfiteiro
+                    if (segundoMenorPreco > 1) porcentagemDiferenca = 0.1 * segundoMenorPreco; // Preço acima de 1, 10% de diferença para ser samfiteiro
                     else porcentagemDiferenca = 0.05 * segundoMenorPreco; // Preço abaixo de 1, 5% de diferença para ser samfiteiro
-                    
+
                     if (diferenca >= porcentagemDiferenca) {
                         console.log('SAMFITEIRO!');
                         if (response.data[1].seller_name == process.env.SELLERS_NAME) { // Tem samfiteiro, mas somos o segundo, não altera o preço
@@ -118,7 +118,7 @@ export async function compareById(productId: number, consideraSamfit = true): Pr
                         }
                     }
                 }
-                    
+
                 // Calcula o novo preço sem a taxa, a gamivo irá adicionar as taxas dps, e o menorPreco será atingido
                 menorPreco = menorPreco - 0.02;
 
@@ -168,11 +168,11 @@ export async function compareById(productId: number, consideraSamfit = true): Pr
         }
 
     } catch (error: AxiosError | any) {
-        // console.log(productId);
         // console.log('Esse é o error.response: ' + error.response);
         // console.log(error);
+        // console.log('Nesse productId: ' + productId);
         // console.log('----------------');
-        if (error.response.status == 404 || error.response.status == 403) {
+        if (error.response && (error.response.status === 404 || error.response.status === 403)) {
             // console.log(`Id: ${productId} é de um jogo 'impossível'`)
             return { productId, menorPreco: -1 };
         } else {
