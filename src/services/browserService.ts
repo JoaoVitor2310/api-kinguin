@@ -61,3 +61,14 @@ export async function searchPeekPopularity(searchString: string): Promise<number
         return 0;
     }
 }
+
+export async function bumpFirstTopic(): Promise<any> {
+    try {
+        const response = await axios.get(`https://www.steamtrades.com/`);
+        return response.data;
+    } catch (error) {
+        console.error("Game not found on SteamCharts:");
+        // console.error(error);
+        return 0;
+    }
+}
