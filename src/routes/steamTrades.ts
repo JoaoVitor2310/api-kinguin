@@ -4,7 +4,7 @@ import { bumpTopics } from '../controllers/steamTradesController.js';
 
 const router = Router();
 
-router.get('/bump-topics', bumpTopics);
 //@ts-ignore
+router.get('/bump-topics', bumpTopics);
 
 export default router;

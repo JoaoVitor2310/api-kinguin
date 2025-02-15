@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
-import { bumpFirstTopic } from '../services/browserService';
+import { bumpSteamTradesTopics } from '../services/browserService';
 
 export const bumpTopics = async (req: Request, res: Response) => {
     const updatedGames: number[] = [];
     try {
-        const result = await bumpFirstTopic();
+        const result = await bumpSteamTradesTopics();
+
+        if (!result) {
+            return res.status(400).json({ message: 'Topics not bumped.' });
+        }
+
         res.status(200).json({ message: 'Topics successfully bumped.', result });
     } catch (error) {
         console.error(error);

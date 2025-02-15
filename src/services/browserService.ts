@@ -3,6 +3,7 @@ import * as cheerio from "cheerio";
 import { clearDLC } from "../helpers/clearDLC.js";
 import { clearString } from "../helpers/clearString.js";
 import { clearRegionAndLanguage } from "../helpers/clearRegionAndLanguage.js";
+import FormData from 'form-data';
 
 export async function searchPeekPopularity(searchString: string): Promise<number> {
     try {
@@ -62,13 +63,66 @@ export async function searchPeekPopularity(searchString: string): Promise<number
     }
 }
 
-export async function bumpFirstTopic(): Promise<any> {
-    try {
-        const response = await axios.get(`https://www.steamtrades.com/`);
-        return response.data;
-    } catch (error) {
-        console.error("Game not found on SteamCharts:");
-        // console.error(error);
-        return 0;
+export async function bumpSteamTradesTopics(): Promise<any> {
+    {
+        let data = new FormData();
+        data.append('do', 'trade_bump');
+        data.append('code', '533Bx'); // HAVE GAMES, WANT TF2
+        data.append('xsrf_token', '8efe42208a1293ad19596ad620191cad');
+
+        try {
+            const response = await axios.post(`https://www.steamtrades.com/ajax.php`, data, {
+                headers: {
+                    'Cookie': 'PHPSESSID=1rvcna2ppcg3oba6iouumc8854fp188185ff03gt98ek1lq9; PHPSESSID=1rvcna2ppcg3oba6iouumc8854fp188185ff03gt98ek1lq9',
+                }
+            });
+            // return response.data;
+        } catch (error) {
+            console.error("Failed to bump 'HAVE GAMES, WANT TF2' topic on SteamTrades");
+            console.error(error);
+            return false;
+        }
     }
+
+    {
+        let data = new FormData();
+        data.append('do', 'trade_bump');
+        data.append('code', 'HVWGM'); // HAVE TF2, WANT POPULAR GAMES 
+        data.append('xsrf_token', '8efe42208a1293ad19596ad620191cad');
+
+        try {
+            const response = await axios.post(`https://www.steamtrades.com/ajax.php`, data, {
+                headers: {
+                    'Cookie': 'PHPSESSID=1rvcna2ppcg3oba6iouumc8854fp188185ff03gt98ek1lq9; PHPSESSID=1rvcna2ppcg3oba6iouumc8854fp188185ff03gt98ek1lq9',
+                }
+            });
+            // return response.data;
+        } catch (error) {
+            console.error("Failed to bump 'HAVE TF2, WANT POPULAR GAMES' topic on SteamTrades");
+            console.error(error);
+            return false;
+        }
+    }
+
+    {
+        let data = new FormData();
+        data.append('do', 'trade_bump');
+        data.append('code', 'LgwHr'); // CHOICE TOPIC
+        data.append('xsrf_token', '8efe42208a1293ad19596ad620191cad');
+
+        try {
+            const response = await axios.post(`https://www.steamtrades.com/ajax.php`, data, {
+                headers: {
+                    'Cookie': 'PHPSESSID=1rvcna2ppcg3oba6iouumc8854fp188185ff03gt98ek1lq9; PHPSESSID=1rvcna2ppcg3oba6iouumc8854fp188185ff03gt98ek1lq9',
+                }
+            });
+            // return response.data;
+        } catch (error) {
+            console.error("Failed to bump CHOICE topic on SteamTrades");
+            console.error(error);
+            return false;
+        }
+    }
+
+    return true;
 }
