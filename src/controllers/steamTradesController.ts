@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { bumpSteamTradesTopics } from '../services/browserService';
+import { bumpSteamTradesTopics } from '../services/browserService.js';
 
 export const bumpTopics = async (req: Request, res: Response) => {
     const updatedGames: number[] = [];
