@@ -251,10 +251,10 @@ export async function bestPriceResearcher(productId: number): Promise<any> {
             const diferenca = segundoMenorPreco - menorPreco;
             const porcentagemDiferenca = 0.1 * segundoMenorPreco;
 
-            if (diferenca >= porcentagemDiferenca) {
-                console.log('SAMFITEIRO!');
-                return response.data[1].retail_price;
-            }
+            // if (diferenca >= porcentagemDiferenca) { // Não iremos considerar samfiteiro no price researcher
+            //     console.log('SAMFITEIRO!');
+            //     return response.data[1].retail_price;
+            // }
 
             menorPreco = menorPreco - 0.01;
 

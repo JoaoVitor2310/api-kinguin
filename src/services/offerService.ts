@@ -11,15 +11,7 @@ export async function editOffer(dataToEdit: CompareResult): Promise<boolean> {
     let { wholesale_price_tier_one, wholesale_price_tier_two } = dataToEdit; // Values that can be changed
     let body;
 
-    if (offerId &&
-        productId !== 1767 && // 1767: Random game on Gamivo
-        productId !== 267 && // 267: Commandos: Behind Enemy Lines
-        productId !== 35879 && // 35879: Commandos 2: Men of Courage
-        productId !== 129971 && // Internet Cafe Simulator 2
-        productId !== 47603 && // LEGO Star Wars: The Skywalker Saga
-        productId !== 32064 && // Assassin's Creed Global Ubisoft Connect
-        productId !== 3059 && // Jagged Alliance 2: Wildfire EN/DE/FR/PL/RU Global
-        productId !== 283) { // 283: Company of Heroes: Tales of Valor
+    if (offerId && productId !== 1767){ // 1767: Random game on Gamivo
 
         switch (wholesale_mode) {
             case 0:
@@ -60,28 +52,28 @@ export async function editOffer(dataToEdit: CompareResult): Promise<boolean> {
                 break;
         }
 
-        try {
-            const response = await axios.put(`${process.env.URL}/api/public/v1/offers/${offerId}`, body, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.TOKEN}`
-                },
-            });
+    try {
+        const response = await axios.put(`${process.env.URL}/api/public/v1/offers/${offerId}`, body, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
 
-            if (response.data == offerId) {
-                console.log('OK!')
-                return true;
-            } else {
-                console.log('Error updating the price');
-                return false;
-            }
-        } catch (error) {
-            console.error(error);
+        if (response.data == offerId) {
+            console.log('OK!')
+            return true;
+        } else {
+            console.log('Error updating the price');
             return false;
         }
-    } else {
-        console.log('We already have the best price.');
+    } catch (error) {
+        console.error(error);
         return false;
     }
+} else {
+    console.log('We already have the best price.');
+    return false;
+}
 }
 
 export async function productOffers(productId: number): Promise<GamivoProductOffers[]> {
