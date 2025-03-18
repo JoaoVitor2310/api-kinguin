@@ -36,17 +36,29 @@ cron.schedule('0 8,18 * * *', async () => { // Horários: 8h e 18h
     timezone: 'America/Sao_Paulo'
 });
 
+cron.schedule('*/5 * * * *', async () => { // Horários de bump na st
+    try {
+        await axios.get(`${process.env.THIS_URL}/api/bump-topics`);
+        console.log('Topicos bumpados.');
+    } catch (error) {
+        console.error('Erro ao chamar o endpoint:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'America/Sao_Paulo'
+});
+
 // Cron para checar price 2
 // cron.schedule('* 9 * * *', async () => { // Horários: 7h
 //     try {
-//         await axios.get(`${process.env.THIS_URL}/api/priceWholesale`);
-//     } catch (error) {
-//         console.error('Erro ao chamar o endpoint priceWholesale:', error);
-//     }
-// }, {
-//     scheduled: true,
-//     timezone: 'America/Sao_Paulo'
-// });
+    //         await axios.get(`${process.env.THIS_URL}/api/priceWholesale`);
+    //     } catch (error) {
+        //         console.error('Erro ao chamar o endpoint priceWholesale:', error);
+        //     }
+        // }, {
+            //     scheduled: true,
+            //     timezone: 'America/Sao_Paulo'
+            // });
 
 // Usa as rotas importadas
 
