@@ -4,4 +4,5 @@ export type GameToList = {
     chaveRecebida: string;
     nomeJogo: string;
     dataAdquirida: string;
+    maisDe8Meses?: boolean;
 }

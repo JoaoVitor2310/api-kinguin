@@ -11,7 +11,8 @@ export async function editOffer(dataToEdit: CompareResult): Promise<boolean> {
     let { wholesale_price_tier_one, wholesale_price_tier_two } = dataToEdit; // Values that can be changed
     let body;
 
-    if (offerId && productId !== 1767){ // 1767: Random game on Gamivo
+    if (offerId && productId !== 1767 && // 1767: Random game on Gamivo
+        productId !== 42931){ // 42931: Spotify Premium 1 Month US  United States
 
         switch (wholesale_mode) {
             case 0:

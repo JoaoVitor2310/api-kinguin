@@ -12,7 +12,17 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
 
         // Fazer req
 
-        const gamesFromAPI = await getProductsToListFromSistemaEstoque();
+        const gamesFromAPI: GameToList[] = await getProductsToListFromSistemaEstoque();
+        // const gamesFromAPI: GameToList[] = [ // Teste
+            // {
+            //     "idGamivo": "1645",
+            //     "minimoParaVenda": "0.35",
+            //     "chaveRecebida": "R46NA-IR4LE-ABBJC",
+            //     "nomeJogo": "War for the Overworld",
+            //     "dataAdquirida": "2025-03-23"
+            // },
+        // ];
+
         // console.log(gamesFromAPI);
         // Loop nos jogos
         for (const game of gamesFromAPI) {
@@ -27,12 +37,14 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
             // Pegar o valor do jogo com as taxas
             const bestPriceWithFee = priceWithFee(bestPrice.menorPreco);
 
-            if (bestPriceWithFee > Number(game.minimoParaVenda) || isDateOlderThanMonths(game.dataAdquirida)) { // Jogo que 
+            game.maisDe8Meses = isDateOlderThanMonths(game.dataAdquirida);
+
+            if (bestPriceWithFee > Number(game.minimoParaVenda) || game.maisDe8Meses) {
                 // Juntar jogos que podem ser listados
                 gamesToSell.push(game);
             }
         }
-        // console.log(gamesToSell)
+        // console.log(gamesToSell);
 
         // Enviar email avisando os jogos que podem ser listar
         if (gamesToSell.length > 0) {
