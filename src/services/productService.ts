@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { GameToList } from "../types/GameToList.js";
 import { GamivoProduct } from "../types/GamivoProduct.js";
+import { sendEmail2 } from "./emailService.js";
 
 export async function productIds(): Promise<number[]> { // Lists games that are/were for sale; there may be games with status 0.
     let offset = 0, limit = 100;
@@ -9,11 +10,18 @@ export async function productIds(): Promise<number[]> { // Lists games that are/
     // limit: Page limit, cannot exceed 100
     let productIds = [], quantity = 0, totalQuantity = 0, isDone = false, totalActive = 0, totalInactive = 0;
     while (!isDone) {
-        const response = await axios.get(`${process.env.URL}/api/public/v1/offers?offset=${offset}&limit=${limit}`, {
-            headers: {
-                'Authorization': `Bearer ${process.env.TOKEN}`
-            },
-        });
+        let response: AxiosResponse<any, any>;
+        try { 
+            response = await axios.get(`${process.env.URL}/api/public/v1/offers?offset=${offset}&limit=${limit}`, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.TOKEN}`
+                },
+            });
+        } catch (error: AxiosError | any) {
+            console.log(error);
+            if(error.response.data.codeMessage === 'UNAUTHORIZED_EXPIRED_TOKEN') sendEmail2([], 'Token Gamivo expirado', 'Solicite um token novo no e atualize no .env da api gamivo.');
+            return [0];
+        }
 
         // console.log(response.data);
 

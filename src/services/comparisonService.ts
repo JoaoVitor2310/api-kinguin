@@ -14,7 +14,7 @@ export async function compareById(productId: number, consideraSamfit = true): Pr
 
     try {
         // Procurar por outras pessoas vendendo aquele msm jogo
-        const response = await axios.get(`${process.env.URL}/api/public/v1/products/${productId}/offers`, {
+        let response = await axios.get(`${process.env.URL}/api/public/v1/products/${productId}/offers`, {
             headers: {
                 'Authorization': `Bearer ${process.env.TOKEN}`
             },
@@ -26,6 +26,9 @@ export async function compareById(productId: number, consideraSamfit = true): Pr
 
         if (response.data.length === 0) return { productId, menorPreco: -5 }; // Produto não encontrado
 
+        response.data = response.data.sort((a: any, b: any) => a.retail_price - b.retail_price); // Ordena os preços em ordem crescente
+
+        
         if (response.data[0].seller_name !== process.env.SELLERS_NAME) { //Não somos o menor preço
 
             const precoContraAPI = checkOthersAPI(response.data); // Check for competitors with API
