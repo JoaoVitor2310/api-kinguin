@@ -12,5 +12,5 @@ export function isDateOlderThanMonths(dateString: string): boolean {
     const totalMonthsDiff = yearDiff * 12 + monthDiff;
 
     // Verifica se a diferença é maior que 8 meses
-    return totalMonthsDiff >= 8;
+    return totalMonthsDiff >= 12;
 }

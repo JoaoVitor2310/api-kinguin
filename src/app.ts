@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware para usar JSON (opcional)
 app.use(express.json());
 
-cron.schedule('5 * * * *', async () => { // Horários de atualização de preços
+cron.schedule('5 * * * *', async () => { // Horários de atualização de preços. A cada hora aos 5 minutos.
 // cron.schedule('0 3,6,8,12,15,18,21,0 * * *', async () => { // Horários de atualização de preços
     try {
         await axios.get(`${process.env.THIS_URL}/api/update-offers`);
@@ -25,7 +25,7 @@ cron.schedule('5 * * * *', async () => { // Horários de atualização de preço
 });
 
 // Cron para checar se algum jogo já pode ser listado
-cron.schedule('0 8,18 * * *', async () => { // Horários: 8h e 18h
+cron.schedule('0 8 * * *', async () => { // Horário: 8h
     try {
         await axios.get(`${process.env.THIS_URL}/api/when-to-sell`);
     } catch (error) {

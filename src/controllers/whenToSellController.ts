@@ -14,13 +14,13 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
 
         const gamesFromAPI: GameToList[] = await getProductsToListFromSistemaEstoque();
         // const gamesFromAPI: GameToList[] = [ // Teste
-            // {
-            //     "idGamivo": "1645",
-            //     "minimoParaVenda": "0.35",
-            //     "chaveRecebida": "R46NA-IR4LE-ABBJC",
-            //     "nomeJogo": "War for the Overworld",
-            //     "dataAdquirida": "2025-03-23"
-            // },
+        // {
+        //     "idGamivo": "1645",
+        //     "minimoParaVenda": "0.35",
+        //     "chaveRecebida": "R46NA-IR4LE-ABBJC",
+        //     "nomeJogo": "War for the Overworld",
+        //     "dataAdquirida": "2025-03-23"
+        // },
         // ];
 
         // console.log(gamesFromAPI);
@@ -44,11 +44,20 @@ export const whenToSell = async (req: Request, res: Response): Promise<void> => 
                 gamesToSell.push(game);
             }
         }
-        // console.log(gamesToSell);
 
-        // Enviar email avisando os jogos que podem ser listar
-        if (gamesToSell.length > 0) {
-            await sendEmail2(gamesToSell, `When to Sell`, `Olá, esses foram os jogos identificados para serem vendidos`);
+        gamesToSell.sort((a: any, b: any) => a.maisDe8Meses - b.maisDe8Meses);
+
+        const gamesToSellByPrice = gamesToSell.filter(game => game.maisDe8Meses === false);
+        const gamesToSellByTime = gamesToSell.filter(game => game.maisDe8Meses === true);
+        
+
+        // Enviar email avisando os jogos que podem ser listados
+        if (gamesToSellByPrice.length > 0) {
+            await sendEmail2(gamesToSellByPrice, `When to Sell PREÇO`, `Jogos a serem vendidos por PREÇO`);
+        }
+        
+        if (gamesToSellByTime.length > 0) {
+            await sendEmail2(gamesToSellByTime, `When to Sell TEMPO`, `Jogos a serem vendidos por TEMPO`);
         }
 
         res.status(200).json({ message: 'Games successfully checked.', gamesToSell });
