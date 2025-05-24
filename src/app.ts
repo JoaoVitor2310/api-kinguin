@@ -13,11 +13,22 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 
 cron.schedule('5 * * * *', async () => { // Horários de atualização de preços. A cada hora aos 5 minutos.
-// cron.schedule('0 3,6,8,12,15,18,21,0 * * *', async () => { // Horários de atualização de preços
     try {
         await axios.get(`${process.env.THIS_URL}/api/update-offers`);
     } catch (error) {
         console.error('Erro ao chamar o endpoint:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'America/Sao_Paulo'
+});
+
+cron.schedule('0 7 * * *', async () => { // Baixa dos jogos vendidos.(Todo dia as 7h)
+    try {
+        await axios.get(`${process.env.THIS_URL}/api/update-sold-offers`);
+    } catch (error) {
+        console.error(error);
+        console.error('Erro ao chamar o endpoint de baixas.');
     }
 }, {
     scheduled: true,
@@ -36,7 +47,7 @@ cron.schedule('0 8 * * *', async () => { // Horário: 8h
     timezone: 'America/Sao_Paulo'
 });
 
-cron.schedule('*/5 * * * *', async () => { // Horários de bump na st
+cron.schedule('*/5 * * * *', async () => { // Horários de bump na st(a cada 5 minutos)
     try {
         await axios.get(`${process.env.THIS_URL}/api/bump-topics`);
         console.log('Topicos bumpados.');
