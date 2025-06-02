@@ -148,3 +148,75 @@ export async function sendSoldData(dataToSend: object): Promise<any> {
         return [];
     }
 }
+
+export async function changeStatus(offerId: number, status: number): Promise<any> {
+    try {
+        const response = await axios.put(`${process.env.URL}/api/public/v1/offers/${offerId}/change-status`, { "status": status }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        // console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        console.error("Error changing status on Gamivo:", error);
+        return [];
+    }
+}
+
+export async function createOffer(dataToSend: object): Promise<any> {
+    try {
+        const response = await axios.post(`${process.env.URL}/api/public/v1/offers`, dataToSend, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        // console.log(response.data);
+        return response.data;
+    } catch (error: any) {
+        const reason = error?.response?.data?.reason;
+
+        if (!reason) {
+            console.error(error);
+            console.error("Error creating offer on Gamivo:");
+            return [];
+        }
+
+        const match = reason.match(/\[(\d+)\]/);
+        if (!match) {
+            console.error(error);
+            console.error("Error creating offer on Gamivo:");
+            return [];
+        }
+
+
+        const offerId = parseInt(match[1], 10);
+
+        // Mudar status da offer para ativo 1
+        try {
+            const statusChangeResult = await changeStatus(offerId, 1);
+            // console.log("Status da oferta alterado para ativo com sucesso:", statusChangeResult);
+        } catch (statusError) {
+            // console.error("Erro ao alterar o status da oferta:", statusError);
+            return [];
+        }
+        return offerId;
+    }
+}
+
+export async function insertOfferKey(offerId: number, dataToSend: object): Promise<any> {
+    try {
+        const response = await axios.post(`${process.env.URL}/api/public/v1/offers/${offerId}/keys/upload`, dataToSend, {
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`
+            },
+        });
+        // console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        console.error("Error inserting keys on Gamivo:", error);
+        return [];
+    }
+}

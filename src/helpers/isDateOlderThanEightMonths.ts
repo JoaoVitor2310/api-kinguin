@@ -1,5 +1,5 @@
 // Função auxiliar para verificar se a diferença entre duas datas é maior que 8 meses
-export function isDateOlderThanMonths(dateString: string): boolean { 
+export function isDateOlderThanMonths(dateString: string, months: number): boolean { 
     if (!dateString) return false; // Caso data seja inválida
 
     const acquiredDate = new Date(dateString); // Converte a string para uma data
@@ -12,5 +12,5 @@ export function isDateOlderThanMonths(dateString: string): boolean {
     const totalMonthsDiff = yearDiff * 12 + monthDiff;
 
     // Verifica se a diferença é maior que 8 meses
-    return totalMonthsDiff >= 12;
+    return totalMonthsDiff >= months;
 }

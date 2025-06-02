@@ -11,7 +11,7 @@ export async function productIds(): Promise<number[]> { // Lists games that are/
     let productIds = [], quantity = 0, totalQuantity = 0, isDone = false, totalActive = 0, totalInactive = 0;
     while (!isDone) {
         let response: AxiosResponse<any, any>;
-        try { 
+        try {
             response = await axios.get(`${process.env.URL}/api/public/v1/offers?offset=${offset}&limit=${limit}`, {
                 headers: {
                     'Authorization': `Bearer ${process.env.TOKEN}`
@@ -19,7 +19,7 @@ export async function productIds(): Promise<number[]> { // Lists games that are/
             });
         } catch (error: AxiosError | any) {
             console.log(error);
-            if(error.response.data.codeMessage === 'UNAUTHORIZED_EXPIRED_TOKEN') sendEmail2([], 'Token Gamivo expirado', 'Solicite um token novo no e atualize no .env da api gamivo.');
+            if (error.response.data.codeMessage === 'UNAUTHORIZED_EXPIRED_TOKEN') sendEmail2([], 'Token Gamivo expirado', 'Solicite um token novo no e atualize no .env da api gamivo.');
             return [0];
         }
 
@@ -76,6 +76,17 @@ export async function getProductsToListFromSistemaEstoque(): Promise<GameToList[
     } catch (error) {
         console.error("Error fetching sistema estoque:", error);
         return [];
+    }
+}
+
+export async function insertDataVendaOnSistemaEstoque(chaveRecebida: string): Promise<number> {
+    try {
+        const response = await axios.post(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/insert-data-venda`, { chaveRecebida });
+        return response.status;
+    } catch (error) {
+        console.error(error);
+        console.error("Error updating dataVenda on sistema estoque:");
+        return 500;
     }
 }
 
