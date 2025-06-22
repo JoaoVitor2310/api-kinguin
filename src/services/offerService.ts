@@ -1,24 +1,56 @@
 import axios from "axios";
-import { wholesaleWithoutFee } from "../helpers/wholesaleWithoutFee.js";
 import { CompareResult } from "../types/CompareResult.js";
-import { GamivoProduct } from "../types/GamivoProduct.js";
-import { GamivoProductOffers } from "../types/GamivoProductOffers.js";
-import { SoldOffer } from "../types/SoldOffer.js";
-import { SalesHistoryResponse } from "../types/SalesHistoryResponse.js";
 import { authService } from "./authService.js";
+import { priceWithoutFee } from "../helpers/priceWithoutFee.js";
 
-export async function getOffers(page: number, size: number): Promise<any> {
+// Tipo para os offers válidos
+export interface ValidOffer {
+    offerId: number;
+    productId: string;
+    status: string;
+    priceIWTR: number;
+    price: number;
+    availableStock: number;
+    declaredStock: number;
+    declaredTextStock: number;
+    fixedAmount: number;
+    percentValue: number;
+}
+
+// Tipo para a resposta da API de offers
+interface OfferResponse {
+    _embedded?: {
+        offerList: Array<{
+            id: number;
+            productId: string;
+            name: string;
+            status: string;
+            priceIWTR: number;
+            price: number;
+            availableStock: number;
+            declaredStock: number;
+            declaredTextStock: number;
+            commissionRule: {
+                fixedAmount: number;
+                percentValue: number;
+            }
+        }>;
+    };
+    _links?: {
+        next?: any;
+    };
+}
+
+export async function getOffers(page: number, size: number): Promise<OfferResponse | false> {
 
     try {
 
         const token = await authService();
-        console.log(process.env.SALES_MANAGER_URL);
         const response = await axios.get(`${process.env.SALES_MANAGER_URL}/api/v1/offers?page=${page}&size=${size}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             },
         });
-        console.log(response);
         return response.data;
     } catch (error) {
         console.error(error);
@@ -26,69 +58,147 @@ export async function getOffers(page: number, size: number): Promise<any> {
     }
 }
 
-export async function editOffer(dataToEdit: CompareResult): Promise<boolean> {
-    const { productId, menorPreco, offerId, wholesale_mode, menorPrecoParaWholesale } = dataToEdit; // Values that will not be changed
-    let { wholesale_price_tier_one, wholesale_price_tier_two } = dataToEdit; // Values that can be changed
-    let body;
+export async function getAllValidOffers(): Promise<ValidOffer[]> {
+    const SIZE = 100;
+    let currentPage = 0;
+    let filteredOffers: ValidOffer[] = [];
+    let hasMorePages = true;
 
-    if (offerId && productId !== 1767 && // 1767: Random game on Gamivo
-        productId !== 42931) { // 42931: Spotify Premium 1 Month US  United States
+    while (hasMorePages) {
+        const response = await getOffers(currentPage, SIZE);
 
-        switch (wholesale_mode) {
-            case 0:
-                body = {
-                    "wholesale_mode": 0,
-                    "seller_price": menorPreco,
-                };
-                break;
-            case 1: // If wholesale, it will calculate the wholesale price and add it to the body
-                if (menorPrecoParaWholesale) {
-                    wholesale_price_tier_one = wholesaleWithoutFee(menorPrecoParaWholesale);
-                    wholesale_price_tier_two = wholesaleWithoutFee(menorPrecoParaWholesale);
-                }
-
-                body = { // seller_price must be higher than wholesale prices
-                    "wholesale_mode": 1,
-                    "seller_price": menorPreco,
-                    "tier_one_seller_price": wholesale_price_tier_one,
-                    "tier_two_seller_price": wholesale_price_tier_two
-                };
-                break;
-            case 2: // If wholesale, it will calculate the wholesale price and add it to the body
-                if (menorPrecoParaWholesale) {
-                    wholesale_price_tier_one = wholesaleWithoutFee(menorPrecoParaWholesale);
-                    wholesale_price_tier_two = wholesaleWithoutFee(menorPrecoParaWholesale);
-                }
-
-                body = { // seller_price must be higher than wholesale prices
-                    "wholesale_mode": 2,
-                    "seller_price": menorPreco,
-                    "tier_one_seller_price": wholesale_price_tier_one,
-                    "tier_two_seller_price": wholesale_price_tier_two
-                };
-                console.log("The wholesale_mode value is 2.");
-                break;
-            default:
-                console.log("The wholesale_mode value is not 0, 1, or 2.");
-                break;
+        if (!response || !response._embedded || !response._embedded.offerList) {
+            break;
         }
 
+        const offers = response._embedded.offerList;
+
+        // Caso queira ver os dados de um jogo específico
+        // for (const offer of offers) {
+        //     if (offer.productId == '5c9b6e7f2539a4e8f17ef8c2') {
+        //         console.log(offer);
+        //     }
+        // }
+
+        // Filtrar e mapear somente os que queremos
+        const validOffers = offers
+            .filter((offer) => offer.status === 'ACTIVE' && offer.availableStock !== 0)
+            .map((offer) => ({
+                offerId: offer.id,
+                productId: offer.productId,
+                name: offer.name,
+                status: offer.status,
+                priceIWTR: offer.priceIWTR,
+                price: offer.price,
+                availableStock: offer.availableStock,
+                declaredStock: offer.declaredStock,
+                declaredTextStock: offer.declaredTextStock,
+                fixedAmount: offer.commissionRule.fixedAmount,
+                percentValue: offer.commissionRule.percentValue,
+            }));
+
+        // @ts-ignore
+        filteredOffers = [...filteredOffers, ...validOffers];
+
+        if (response._links && response._links.next) {
+            currentPage++;
+        } else {
+            hasMorePages = false;
+        }
+        console.log('currentPage: ' + currentPage);
+    }
+
+    return filteredOffers;
+}
+
+export async function editOffer(dataToEdit: CompareResult): Promise<boolean> {
+    const { productId, menorPreco, offerId, wholesale_mode } = dataToEdit; // Values that will not be changed
+
+    const body = {
+        "status": "ACTIVE",
+        "price": {
+            "amount": dataToEdit.menorPreco * 100, // em centavos
+            "currency": "EUR"
+        },
+        "declaredStock": dataToEdit.declaredStock,
+        "maxDeliveryDate": null,
+        "declaredTextStock": dataToEdit.declaredTextStock,
+        "wholesale": {
+            "name": null,
+            "enabled": dataToEdit.wholesale_mode,
+            "tiers": [
+                {
+                    "discount": 0,
+                    "level": 1,
+                    "price": {
+                        "amount": dataToEdit.wholesale_price_tier_one!  * 100, // centavos
+                        "currency": "EUR"
+                    },
+                    "priceIWTR": {
+                        "amount": priceWithoutFee(dataToEdit.wholesale_price_tier_one, dataToEdit.fixedAmount!, dataToEdit.percentValue!)  * 100,
+                        "currency": "EUR"
+                    }
+                },
+                {
+                    "discount": 0,
+                    "level": 2,
+                    "price": {
+                        "amount": dataToEdit.wholesale_price_tier_two!  * 100, // centavos
+                        "currency": "EUR"
+                    },
+                    "priceIWTR": {
+                        "amount": priceWithoutFee(dataToEdit.wholesale_price_tier_two, dataToEdit.fixedAmount!, dataToEdit.percentValue!)  * 100,
+                        "currency": "EUR"
+                    }
+                },
+                {
+                    "discount": 0,
+                    "level": 3,
+                    "price": {
+                        "amount": dataToEdit.wholesale_price_tier_three!  * 100, // centavos
+                        "currency": "EUR"
+                    },
+                    "priceIWTR": {
+                        "amount": priceWithoutFee(dataToEdit.wholesale_price_tier_three, dataToEdit.fixedAmount!, dataToEdit.percentValue!)  * 100,
+                        "currency": "EUR"
+                    }
+                },
+                {
+                    "discount": 0,
+                    "level": 4,
+                    "price": {
+                        "amount": dataToEdit.wholesale_price_tier_four!  * 100, // centavos
+                        "currency": "EUR"
+                    },
+                    "priceIWTR": {
+                        "amount": priceWithoutFee(dataToEdit.wholesale_price_tier_four, dataToEdit.fixedAmount!, dataToEdit.percentValue!)  * 100,
+                        "currency": "EUR"
+                    }
+                }
+            ]
+        },
+        "description": null,
+        "minQuantity": null,
+        "deliveryTime": null,
+        "deliveryMethods": null
+    };
+
+    if (offerId) { // Se quiser ignorar algum jogo, coloque o offerId aqui
+
         try {
-            const response = await axios.put(`${process.env.URL}/api/public/v1/offers/${offerId}`, body, {
+            const token = await authService();
+            const response = await axios.put(`${process.env.SALES_MANAGER_URL}/api/v1/offers/${offerId}`, body, {
                 headers: {
-                    'Authorization': `Bearer ${process.env.TOKEN}`
+                    'Authorization': `Bearer ${token}`
                 },
             });
+            
+            if (response.status == 200) return true;
+            else return false;
 
-            if (response.data == offerId) {
-                console.log('OK!')
-                return true;
-            } else {
-                console.log('Error updating the price');
-                return false;
-            }
         } catch (error) {
             console.error(error);
+            console.error('Error editing offer with offerId: ' + offerId);
             return false;
         }
     } else {

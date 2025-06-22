@@ -1,84 +1,52 @@
 import { Request, Response } from 'express';
-import { productIds, searchByIdGamivo } from '../services/productService.js';
 import { compareById } from '../services/comparisonService.js';
-import { editOffer, fetchSalesHistory, sendSoldData, soldOrderData } from '../services/offerService.js';
-import { SoldOffer } from '../types/SoldOffer.js';
-import { SalesHistoryResponse } from '../types/SalesHistoryResponse.js';
-import axios, { AxiosError } from 'axios';
-import qs from 'qs';
+import { editOffer, getAllValidOffers } from '../services/offerService.js';
 
 export const updateOffers = async (req: Request, res: Response) => {
-    let response;
+    const updatedGames: string[] = [];
+
     try {
-        response = await axios.post(
-            `${process.env.AUTH_URL}/auth/token`,
-            qs.stringify({
-                grant_type: 'client_credentials',
-                client_id: process.env.CLIENT_ID,
-                client_secret: process.env.CLIENT_SECRET
-            }),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            }
-        );
-        console.log(response.data);
-    } catch (error: AxiosError | any) {
-        console.log(error);
-        console.log(process.env.URL);
-        res.status(200).json({ message: 'Games successfully updated.', error });
-        return;
-    }
+        const filteredOffers = await getAllValidOffers();
+        // return res.status(200).json({ message: 'All offers retrieved successfully.', filteredOffers });
 
-    res.status(200).json({ message: 'Games successfully updated.'});
-    return;
+        // Teste
+        // const filteredOffers = [
+        //     {
+        //         "offerId": "683f365a53a94f4fc408d134",
+        //         "productId": "5c9b7b5d2539a4e8f1861a57",
+        //         "name": "Archangel: Hellfire - Fully Loaded DLC Steam CD Key",
+        //         "status": "ACTIVE",
+        //         "priceIWTR": {
+        //             "amount": 56,
+        //             "currency": "EUR"
+        //         },
+        //         "price": {
+        //             "amount": 67,
+        //             "currency": "EUR"
+        //         },
+        //         "availableStock": 1,
+        //         "declaredStock": 0,
+        //         "declaredTextStock": 0
+        //     },
+        // ];
 
-    const updatedGames: number[] = [];
-    try {
-        const hora1 = new Date(); // Start time
-        const ids = await productIds(); // Retrieve product IDs
+        for (const offer of filteredOffers) {
+            const dataToEdit = await compareById(offer.productId, offer.fixedAmount!, offer.percentValue!);
+            dataToEdit.declaredStock = offer.declaredStock;
+            dataToEdit.declaredTextStock = offer.declaredTextStock;
+            dataToEdit.availableStock = offer.availableStock;
 
-        for (const id of ids) {
-            const dataToEdit = await compareById(id, true); // Call comparison function
-            // console.log(dataToEdit);
-
-            // Fazer requisiçao e buscar por produtos com o productId == idGamivo 
-            const games = await searchByIdGamivo(id);
-            // console.log(games);
-            let minApi: number = 0.12, maxApi: number = 500;
-
-            if (games.length > 0 && dataToEdit.menorPreco > 0) {
-                minApi = Math.min(...games.map(game => parseFloat(game.minApiGamivo)));
-                maxApi = Math.max(...games.map(game => parseFloat(game.maxApiGamivo)));
-
-                if (dataToEdit.menorPreco < minApi) {
-                    dataToEdit.menorPreco = minApi;
-                }
-
-                if (dataToEdit.menorPreco > maxApi) {
-                    dataToEdit.menorPreco = maxApi;
-                }
-            }
             const result = await editOffer(dataToEdit);   // Call offer edit function
+            console.log(result);
 
             if (result) {
-                updatedGames.push(id);
+                updatedGames.push(offer.productId);
             };
         }
 
-        const hora2 = new Date(); // End time
-
-        // Calculate time difference in milliseconds
-        const timeDiffMs = hora2.getTime() - hora1.getTime();
-        // Convert to seconds
-        const timeDiffSeconds = Math.floor(timeDiffMs / 1000);
-
-        console.log(`Total execution time: ${timeDiffSeconds} seconds`);
-
-        res.status(200).json({ message: 'Games successfully updated.', updatedGames });
+        return res.status(200).json({ message: 'All offers updated successfully.', updatedGames });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error updating offers.', updatedGames });
+        res.status(500).json({ message: 'Error retrieving offers.' });
     }
 };

@@ -12,16 +12,16 @@ const PORT = process.env.PORT || 6000;
 // Middleware para usar JSON (opcional)
 app.use(express.json());
 
-// cron.schedule('5 * * * *', async () => { // Horários de atualização de preços. A cada hora aos 5 minutos.
-//     try {
-//         await axios.get(`${process.env.THIS_URL}:${process.env.PORT}/api/update-offers`);
-//     } catch (error) {
-//         console.error('Erro ao chamar o endpoint:', error);
-//     }
-// }, {
-//     scheduled: true,
-//     timezone: 'America/Sao_Paulo'
-// });
+cron.schedule('0 0,8,16 * * *', async () => { // Horários de atualização de preços. A cada hora aos 5 minutos.
+    try {
+        await axios.get(`http://localhost:${PORT}/api/update-offers`);
+    } catch (error) {
+        console.error('Erro ao chamar o endpoint:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'America/Sao_Paulo'
+});
 
 
 // Usa as rotas importadas
