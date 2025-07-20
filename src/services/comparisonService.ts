@@ -119,7 +119,7 @@ export async function compareById(productId: string, fixedAmount: number, percen
 
                 console.log('menorPreco: ' + menorPreco);
                 menorPrecoSemTaxa = priceWithoutFee(menorPreco, fixedAmount, percentValue);
-                console.log('menorPrecoSemTaxa: ' + menorPrecoSemTaxa);
+                console.log('menorPrecoSemTaxa: ' + menorPrecoSemTaxa.toFixed(2));
 
                 return { productId, menorPreco: Number(menorPrecoSemTaxa.toFixed(2)), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, wholesale_price_tier_three, wholesale_price_tier_four, menorPrecoParaWholesale: Number(menorPreco.toFixed(2)) };
             }
@@ -155,7 +155,7 @@ export async function compareById(productId: string, fixedAmount: number, percen
         }
 
     } catch (error: AxiosError | any) {
-        if(error.response.status !== 404) { // 404 é quando nãõ tem ngm vendendo, não vai logar   
+        if(error.response && error.response.status !== 404) { // 404 é quando não tem ngm vendendo, não vai logar   
             console.log(error);
             console.log('Catch do compareById no productId: ' + productId);
         }
