@@ -18,7 +18,7 @@ export async function compareById(productId: string, fixedAmount: number, percen
                 'X-Api-Key': process.env.X_API_KEY
             },
         });
-        
+
         let responseOffers = response.data.offers;
 
         if (responseOffers.length === 0) return { productId, menorPreco: -5 }; // Produto não encontrado
@@ -145,7 +145,7 @@ export async function compareById(productId: string, fixedAmount: number, percen
                     menorPrecoSemTaxa = menorPrecoSemTaxa.toFixed(2);
                     console.log('aumentando o preço no productId: ' + productId);
 
-                    return { productId, menorPreco: Number(menorPrecoSemTaxa), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two,  menorPrecoParaWholesale: Number(menorPreco) };
+                    return { productId, menorPreco: Number(menorPrecoSemTaxa), offerId, wholesale_mode, wholesale_price_tier_one, wholesale_price_tier_two, menorPrecoParaWholesale: Number(menorPreco) };
                 } else {
                     return { productId, menorPreco: -4 };
                 }
@@ -155,10 +155,20 @@ export async function compareById(productId: string, fixedAmount: number, percen
         }
 
     } catch (error: AxiosError | any) {
-        if(error.response && error.response.status !== 404) { // 404 é quando não tem ngm vendendo, não vai logar   
+        if (error.response && error.response.status !== 404) { // 404 é quando não tem ngm vendendo, não vai logar   
             console.log(error);
             console.log('Catch do compareById no productId: ' + productId);
         }
         return { productId, menorPreco: -1 };
+    }
+}
+
+export async function searchByIdKinguin(idKinguin: string): Promise<any[]> {
+    try {
+        const response = await axios.get(`${process.env.URL_SISTEMA_ESTOQUE}/venda-chave-troca/search-by-id-kinguin/${idKinguin}`);
+        return response.data.data;
+    } catch (error) {
+        // console.error(error);
+        return [];
     }
 }

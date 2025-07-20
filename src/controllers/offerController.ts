@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { compareById } from '../services/comparisonService.js';
+import { compareById, searchByIdKinguin } from '../services/comparisonService.js';
 import { editOffer, getAllValidOffers } from '../services/offerService.js';
 
 export const updateOffers = async (req: Request, res: Response) => {
@@ -7,6 +7,7 @@ export const updateOffers = async (req: Request, res: Response) => {
 
     try {
         const hora1 = new Date(); // Start time
+
         const filteredOffers = await getAllValidOffers();
         // return res.status(200).json({ message: 'All offers retrieved successfully.', filteredOffers });
 
@@ -18,11 +19,11 @@ export const updateOffers = async (req: Request, res: Response) => {
         //         "name": "Train Simulator Classic - Peninsula Corridor: San Francisco - Gilroy Route Add-On DLC Steam CD Key",
         //         "status": "ACTIVE",
         //         "priceIWTR": {
-        //             "amount": 9,
+        //             "amount": 8,
         //             "currency": "EUR"
         //         },
         //         "price": {
-        //             "amount": 45,
+        //             "amount": 44,
         //             "currency": "EUR"
         //         },
         //         "availableStock": 20,
@@ -31,44 +32,44 @@ export const updateOffers = async (req: Request, res: Response) => {
         //         "fixedAmount": 35,
         //         "percentValue": 14
         //     }
-        // {
-        //     "offerId": "673ca2462a091a0001be4ba0",
-        //     "productId": "614ec26c365b2a000175766c",
-        //     "name": "Leap of Champions Steam CD Key",
-        //     "status": "ACTIVE",
-        //     "priceIWTR": {
-        //         "amount": 27,
-        //         "currency": "EUR"
-        //     },
-        //     "price": {
-        //         "amount": 35,
-        //         "currency": "EUR"
-        //     },
-        //     "availableStock": 1,
-        //     "declaredStock": 0,
-        //     "declaredTextStock": 0,
-        //     "fixedAmount": 5,
-        //     "percentValue": 10
-        // },
-        // {
-        //     "offerId": "674262602a091a0001be512d",
-        //     "productId": "5c9b6c522539a4e8f17d8ec8",
-        //     "name": "Stellar 2D Steam CD Key",
-        //     "status": "ACTIVE",
-        //     "priceIWTR": {
-        //         "amount": 17,
-        //         "currency": "EUR"
-        //     },
-        //     "price": {
-        //         "amount": 24,
-        //         "currency": "EUR"
-        //     },
-        //     "availableStock": 1,
-        //     "declaredStock": 0,
-        //     "declaredTextStock": 0,
-        //     "fixedAmount": 5,
-        //     "percentValue": 10
-        // },
+            // {
+            //     "offerId": "673ca2462a091a0001be4ba0",
+            //     "productId": "614ec26c365b2a000175766c",
+            //     "name": "Leap of Champions Steam CD Key",
+            //     "status": "ACTIVE",
+            //     "priceIWTR": {
+            //         "amount": 27,
+            //         "currency": "EUR"
+            //     },
+            //     "price": {
+            //         "amount": 35,
+            //         "currency": "EUR"
+            //     },
+            //     "availableStock": 1,
+            //     "declaredStock": 0,
+            //     "declaredTextStock": 0,
+            //     "fixedAmount": 5,
+            //     "percentValue": 10
+            // },
+            // {
+            //     "offerId": "674262602a091a0001be512d",
+            //     "productId": "5c9b6c522539a4e8f17d8ec8",
+            //     "name": "Stellar 2D Steam CD Key",
+            //     "status": "ACTIVE",
+            //     "priceIWTR": {
+            //         "amount": 17,
+            //         "currency": "EUR"
+            //     },
+            //     "price": {
+            //         "amount": 24,
+            //         "currency": "EUR"
+            //     },
+            //     "availableStock": 1,
+            //     "declaredStock": 0,
+            //     "declaredTextStock": 0,
+            //     "fixedAmount": 5,
+            //     "percentValue": 10
+            // },
         // ];
 
         for (const offer of filteredOffers) {
@@ -76,6 +77,43 @@ export const updateOffers = async (req: Request, res: Response) => {
             dataToEdit.declaredStock = offer.declaredStock;
             dataToEdit.declaredTextStock = offer.declaredTextStock;
             dataToEdit.availableStock = offer.availableStock;
+
+            // Fazer requisiçao e buscar por produtos com o productId == idKinguin
+            const games = await searchByIdKinguin(offer.productId);
+
+            if (games.length > 0 && dataToEdit.menorPreco > 0) {
+                const validMinValues = games
+                    .map(game => Number(game.minApiKinguin))
+                    .filter(num => !isNaN(num) && num > 0);
+
+                const validMaxValues = games
+                    .map(game => Number(game.maxApiKinguin))
+                    .filter(num => !isNaN(num) && num > 0);
+
+                // Calcula os limites reais vindos da API
+                let minApi = validMinValues.length > 0 ? Math.min(...validMinValues) : null;
+                let maxApi = validMaxValues.length > 0 ? Math.max(...validMaxValues) : null;
+
+                // Tem minApi e o menorPreco é menor que minApi
+                if (minApi !== null && dataToEdit.menorPreco < minApi) {
+                    dataToEdit.menorPreco = minApi;
+                }
+
+                // Tem maxApi e o menorPreco é menor que maxApi
+                if (maxApi !== null && dataToEdit.menorPreco > maxApi) {
+                    dataToEdit.menorPreco = maxApi;
+                }
+
+                // Garante mínimo aceitável de 0.12
+                if (dataToEdit.menorPreco < 0.1) {
+                    dataToEdit.menorPreco = 0.1;
+                }
+
+                // Garante máximo aceitável de 2000
+                if (dataToEdit.menorPreco > 2000) {
+                    dataToEdit.menorPreco = 2000;
+                }
+            }
 
             const result = await editOffer(dataToEdit);   // Call offer edit function
             console.log(result);
