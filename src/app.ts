@@ -28,7 +28,7 @@ cron.schedule('0 0,8,16 * * *', async () => { // Horários de atualização de p
 
 app.use('/api', routes);
 app.get('/', (req, res) => {
-    res.send('Desenvolvido por João Vitor Matos Gouveia: https://www.linkedin.com/in/jo%C3%A3o-vitor-matos-gouveia-14b71437/');
+    res.send('Api kinguin online.');
 });
 
 export default app;
